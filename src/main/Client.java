@@ -1,7 +1,12 @@
 package main;
 
+import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,13 +38,31 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	private DataInputStream dataInputStream = null;
 	private static volatile int mouseX = -1;
 	private static volatile int mouseY = -1;
+	private static int widthScreenServer = -1;
+	private static int heightScreenServer = -1;
+	private static float scale = 1;
+	
+	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
+
+		Graphics2D g2d = resizedImage.createGraphics();
+
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+		g2d.dispose();
+
+		return resizedImage;
+	}
 	
 	public void GUI() {
 		setTitle("Client");
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
 		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
 		
-		setBounds(width / 2, height / 2, width, height);
+//		setBounds(width / 2, height / 2, width, height);
 		setLayout(new GridBagLayout());
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
@@ -70,11 +93,37 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			inputStream = socket.getInputStream();
 			dataInputStream = new DataInputStream(inputStream);
 			
+			
+			// dat lai kich thuoc
+			
+			widthScreenServer = dataInputStream.readInt();
+			heightScreenServer = dataInputStream.readInt();
+			
+			try {
+            	Robot robot = new Robot();
+				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+				
+				double widthClient = screenSize.getWidth();
+				double heigthClient = screenSize.getHeight();
+				
+				while(true) {
+					if(widthClient > widthScreenServer || heigthClient > heightScreenServer) break;
+					widthScreenServer = widthScreenServer * 4 / 5;
+					heightScreenServer = heightScreenServer * 4 / 5;
+					scale = scale * 4 / 5;
+				}
+				
+            } catch(AWTException err) {
+            	err.printStackTrace();
+            }
+			
+			setBounds(0, 0, widthScreenServer, heightScreenServer);
+			
 			Thread sendActionToServer = new Thread(() -> {
 				try {
 					while(true) {
-						out.writeInt(mouseX);
-						out.writeInt(mouseY);
+						out.writeFloat(mouseX / scale);
+						out.writeFloat(mouseY / scale);
 						System.out.println("Mouse to X: " + mouseX + ", Y: " + mouseY);
 						Thread.sleep(100);
 					}
@@ -91,21 +140,25 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	            // Đọc kích thước của ảnh trước
 	            byte[] sizeAr = new byte[4];
 	            
-	            inputStream.read(sizeAr);
+	            dataInputStream.readFully(sizeAr);
 	            // datadataInputStream
 	            
 	            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
 	            
 	            // Nhận dữ liệu ảnh
 	            byte[] imageBytes = new byte[size];
-	            inputStream.read(imageBytes);
+	            dataInputStream.readFully(imageBytes);
 	            // // datadataInputStream
 	            
 	            // Chuyển đổi lại thành BufferedImage
-	            BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+	            BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));  
 	            
-	            jLabelScreen.setIcon(new ImageIcon(receivedImage));
-	            repaint();
+	            BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
+	            
+	            if(receivedImage != null) {
+	            	jLabelScreen.setIcon(new ImageIcon(resizedImage));
+	            	repaint();
+	            }
 			}
 			
 		} catch (UnknownHostException u) {
@@ -138,9 +191,9 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			Point point = e.getPoint();
 			
 			if(e.getButton() == MouseEvent.BUTTON1) {
-				System.out.println("You left click the mouse at " + point.x + " " + point.y);
+//				System.out.println("You left click the mouse at " + point.x + " " + point.y);
 			} else if(e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
-				System.out.println("You right click the mouse at " + point.x + " " + point.y);
+//				System.out.println("You right click the mouse at " + point.x + " " + point.y);
 			}
 		}
 		catch (Exception exception) {
@@ -153,7 +206,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		// TODO Auto-generated method stub
 		try {
 			Point point = e.getPoint();
-			System.out.println("You press the mouse at " + point.x + " " + point.y);
+//			System.out.println("You press the mouse at " + point.x + " " + point.y);
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
@@ -165,7 +218,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		// TODO Auto-generated method stub
 		try {
 			Point point = e.getPoint();
-			System.out.println("You release the mouse at " + point.x + " " + point.y);
+//			System.out.println("You release the mouse at " + point.x + " " + point.y);
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
@@ -177,7 +230,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		// TODO Auto-generated method stub
 		try {
 			Point point = e.getPoint();
-			System.out.println("You enter the window at " + point.x + " " + point.y);
+//			System.out.println("You enter the window at " + point.x + " " + point.y);
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
@@ -189,7 +242,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		// TODO Auto-generated method stub
 		try {
 			Point point = e.getPoint();
-			System.out.println("You exit the window at " + point.x + " " + point.y);
+//			System.out.println("You exit the window at " + point.x + " " + point.y);
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();

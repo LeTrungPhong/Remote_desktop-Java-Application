@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,6 +36,7 @@ public class Server extends JFrame implements ActionListener {
 	private ServerSocket serverSocket = null;
 	private OutputStream outputStream = null;
 	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
 
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
 		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
@@ -52,7 +54,7 @@ public class Server extends JFrame implements ActionListener {
 	}
 
 	public void GUI() {
-		setTitle("Server");
+		setTitle("Server"); 
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
 		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
 
@@ -74,12 +76,18 @@ public class Server extends JFrame implements ActionListener {
 
 			Socket socketClient = serverSocket.accept();
 			System.out.println("Client connected");
+			
+			dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
 
 			Thread sendImage = new Thread(() -> {
 				try {
 					Robot robot = new Robot();
 					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 					Rectangle screenRect = new Rectangle(screenSize);
+					
+					// gui kich thuoc man hinh server
+					dataOutputStream.writeInt(screenSize.width);
+					dataOutputStream.writeInt(screenSize.height);
 
 					int screenShotCount = 0;
 
@@ -102,7 +110,7 @@ public class Server extends JFrame implements ActionListener {
 						// Chuyển đổi ảnh thành byte array
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-						ImageIO.write(resizedImage, "jpg", baos);
+						ImageIO.write(screenCapture, "jpg", baos);
 						// Phương thức ImageIO.write(image, "png", baos) trong Java được
 						// sử dụng để ghi một đối tượng ảnh (BufferedImage) vào một luồng đầu
 						// ra dưới định dạng ảnh nhất định (ở đây là PNG) và lưu vào
@@ -135,13 +143,12 @@ public class Server extends JFrame implements ActionListener {
 			dataInputStream = new DataInputStream(socketClient.getInputStream());
 			
 			while(true) {
-				int mouseX = dataInputStream.readInt();
-				int mouseY = dataInputStream.readInt();
-				
+				float mouseX = dataInputStream.readFloat();
+				float mouseY = dataInputStream.readFloat();
 				
 				try {
 					Robot robot = new Robot();
-//					robot.mouseMove(mouseX, mouseY);
+					robot.mouseMove((int)mouseX, (int)mouseY);
 					System.out.println("Move mouse from client X: " + mouseX + ", Y: " + mouseY);
 				} catch(AWTException err) {
 					err.printStackTrace();
