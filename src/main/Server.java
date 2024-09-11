@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -32,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
 public class Server extends JFrame implements ActionListener {
-
 	private JLabel jLabelScreen;
 	private JButton jbutton;
 	private ServerSocket serverSocket = null;
@@ -57,7 +57,7 @@ public class Server extends JFrame implements ActionListener {
 	}
 
 	public void GUI() {
-		setTitle("Server"); 
+		setTitle("Server");
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
 		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
 
@@ -68,7 +68,7 @@ public class Server extends JFrame implements ActionListener {
 		jLabelScreen = new JLabel();
 		jbutton = new JButton("Screen");
 		add(jLabelScreen);
- 
+
 		setVisible(true);
 	}
 
@@ -79,7 +79,7 @@ public class Server extends JFrame implements ActionListener {
 
 			socketClient = serverSocket.accept();
 			System.out.println("Client connected");
-			
+
 			dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
 
 			Thread sendImage = new Thread(() -> {
@@ -87,7 +87,7 @@ public class Server extends JFrame implements ActionListener {
 					Robot robot = new Robot();
 					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 					Rectangle screenRect = new Rectangle(screenSize);
-					
+
 					// gui kich thuoc man hinh server
 					dataOutputStream.writeInt(screenSize.width);
 					dataOutputStream.writeInt(screenSize.height);
@@ -129,8 +129,8 @@ public class Server extends JFrame implements ActionListener {
 						outputStream.flush();
 
 						// cap nhat hinh anh tren JFrame
-						jLabelScreen.setIcon(new ImageIcon(resizedImage));
-						repaint();
+//						jLabelScreen.setIcon(new ImageIcon(resizedImage));
+//						repaint();
 
 						// dung 1 giay truoc khi chup lai
 						Thread.sleep(100);
@@ -142,39 +142,82 @@ public class Server extends JFrame implements ActionListener {
 			});
 
 			sendImage.start();
-			
+
 			dataInputStream = new DataInputStream(socketClient.getInputStream());
-			
-			while(true) {
-				float mouseX = dataInputStream.readFloat();
-				float mouseY = dataInputStream.readFloat();
-				int click = dataInputStream.readInt();
-				int keyCode = dataInputStream.readInt();
-				
+
+			while (true) {
+//				System.out.println("check");
 				try {
 					Robot robot = new Robot();
-					
-					// di chuyen con tro chuot
-//					robot.mouseMove((int)mouseX, (int)mouseY);
-					if(click == 1) {
-						robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-			            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-					} else if(click == 2){
-						robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
-			            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+					int command = dataInputStream.readInt();
+//					System.out.println("command");
+
+					switch (command) {
+					case -6: {
+						int mouseEvent = dataInputStream.readInt();
+
+						if (mouseEvent == MouseEvent.BUTTON1) {
+//							robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//				            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+							System.out.println("MouseEvent_BUTTON1");
+						} else if (mouseEvent == MouseEvent.BUTTON3) {
+//							robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+//				            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+							System.out.println("MouseEvent_BUTTON3");
+						}
+						break;
 					}
-//					System.out.println("Move mouse from client X: " + mouseX + ", Y: " + mouseY);
-					
-					// lang nghe nhan phim
-					if(keyCode != -1) {
+					case -5: {
+						float mouseX = dataInputStream.readFloat();
+						float mouseY = dataInputStream.readFloat();
+//						robot.mouseMove((int)mouseX, (int)mouseY);
+						System.out.println("MouseX: " + (int) mouseX + ", MouseY: " + (int) mouseY);
+						break;
+					}
+					case -3: {
+						int keyCode = dataInputStream.readInt();
 //						robot.keyPress(keyCode);
 //						robot.keyRelease(keyCode);
-						System.out.println("Client da nhan phim: " + (char)keyCode);
+						System.out.println("MouseClicked");
+						break;
 					}
-					
-				} catch(AWTException err) {
+					default:
+//						throw new IllegalArgumentException("Unexpected value: ");
+						break;
+					}
+				} catch (AWTException err) {
 					err.printStackTrace();
 				}
+
+//				float mouseX = dataInputStream.readFloat();
+//				float mouseY = dataInputStream.readFloat();
+//				int click = dataInputStream.readInt();
+//				int keyCode = dataInputStream.readInt();
+
+//				try {
+//					Robot robot = new Robot();
+//					
+//					// di chuyen con tro chuot
+//					robot.mouseMove((int)mouseX, (int)mouseY);
+//					if(click == 1) {
+//						robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//			            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+//					} else if(click == 2){
+//						robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+//			            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+//					}
+////					System.out.println("Move mouse from client X: " + mouseX + ", Y: " + mouseY);
+//					
+//					// lang nghe nhan phim
+//					if(keyCode != -1) {
+//						robot.keyPress(keyCode);
+//						robot.keyRelease(keyCode);
+//						System.out.println("Client da nhan phim: " + (char)keyCode);
+//					}
+//					
+//				} catch(AWTException err) {
+//					err.printStackTrace();
+//				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -194,7 +237,7 @@ public class Server extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getSource() == jbutton) {
-			
+
 		}
 	}
 }

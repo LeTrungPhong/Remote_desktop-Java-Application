@@ -101,7 +101,6 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			dataInputStream = new DataInputStream(inputStream);
 
 			// dat lai kich thuoc
-
 			widthScreenServer = dataInputStream.readInt();
 			heightScreenServer = dataInputStream.readInt();
 
@@ -129,21 +128,22 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			Thread sendActionToServer = new Thread(() -> {
 				try {
 					while (true) {
-						out.writeFloat(mouseX / scale);
-						out.writeFloat(mouseY / scale);
-						out.writeInt(click);
-						if (keyHeldSendClient) {
-							out.writeInt(keyCode);
-							System.out.println("Key Typed send server: " + (char)(keyCode));
-//							System.out.println(3);
-							keyHeldSendClient = false;
-							keyCode = -1;
-						} else {
-							out.writeInt(-1);
-						}
-						click = -1;
+//						out.writeFloat(mouseX / scale);
+//						out.writeFloat(mouseY / scale);
+//						out.writeInt(click);
+//						if (keyHeldSendClient) {
+//							out.writeInt(keyCode);
+//							System.out.println("Key Typed send server: " + (char)(keyCode));
+////							System.out.println(3);
+//							keyHeldSendClient = false;
+//							keyCode = -1;
+//						} else {
+//							out.writeInt(-1);
+//						}
+//						click = -1;
 //						System.out.println("Mouse to X: " + mouseX + ", Y: " + mouseY);
 //						Thread.sleep(100);
+//						out.flush();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -211,9 +211,17 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			if (e.getButton() == MouseEvent.BUTTON1) {
 //				System.out.println("You left click the mouse at " + point.x + " " + point.y);
 				click = 1;
+				out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
+				out.writeInt(MouseEvent.BUTTON1);
+				out.flush();
+				System.out.println("MouseClicked_BUTTON1");
 			} else if (e.getButton() == MouseEvent.BUTTON3) {
 //				System.out.println("You right click the mouse at " + point.x + " " + point.y);
 				click = 2;
+				out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
+				out.writeInt(MouseEvent.BUTTON3);
+				out.flush();
+				System.out.println("MouseClicked_BUTTON3");
 			}
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -281,8 +289,18 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		mouseX = e.getX();
-		mouseY = e.getY();
+//		mouseX = e.getX();
+//		mouseY = e.getY();
+		try {
+			out.writeInt(Commands.MOVE_MOUSE.getAbbrev());
+			out.writeFloat(e.getX() / scale);
+			out.writeFloat(e.getY() / scale);
+			out.flush();
+			System.out.println("MouseMoved X: " + e.getX() / scale + ", Y: " + e.getY() / scale);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 //        System.out.println("Mouse moved to X: " + mouseX + ", Y: " + mouseY);
 	}
 
@@ -297,15 +315,27 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 //		System.out.println("KeyPressed :" + e.getKeyChar());
-		if (!keyHeld && keyCode == -1) {
-			keyCode = e.getKeyCode();
-
-//			System.out.println("Phím đã được nhấn: " + e.getKeyChar());
-			keyHeld = true; // Đánh dấu là phím đang được giữ
-			keyHeldSendClient = true;
-		}
+//		if (!keyHeld) {
+//			keyCode = e.getKeyCode();
+//
+////			System.out.println("Phím đã được nhấn: " + e.getKeyChar());
+//			keyHeld = true; // Đánh dấu là phím đang được giữ
+//			keyHeldSendClient = true;
+//		}
 //		keyHeld = true;
 //		System.out.println("1");
+		
+//		if(!keyHeld) { keyHeld = true; }
+		
+		try {
+			out.writeInt(Commands.PRESS_KEY.getAbbrev());
+			out.writeInt(e.getKeyCode());
+			out.flush();
+			System.out.println("KeyPressed :" + e.getKeyCode());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 	@Override
@@ -317,6 +347,6 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 ////			System.out.println("2");
 //			
 //		}
-		keyHeld = false;
+		
 	}
 }
