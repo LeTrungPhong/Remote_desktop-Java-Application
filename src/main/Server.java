@@ -10,6 +10,8 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -34,6 +36,7 @@ public class Server extends JFrame implements ActionListener {
 	private JLabel jLabelScreen;
 	private JButton jbutton;
 	private ServerSocket serverSocket = null;
+	private Socket socketClient = null;
 	private OutputStream outputStream = null;
 	private DataInputStream dataInputStream = null;
 	private DataOutputStream dataOutputStream = null;
@@ -74,7 +77,7 @@ public class Server extends JFrame implements ActionListener {
 			serverSocket = new ServerSocket(Port.port);
 			System.out.println("Server is running...");
 
-			Socket socketClient = serverSocket.accept();
+			socketClient = serverSocket.accept();
 			System.out.println("Client connected");
 			
 			dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
@@ -145,11 +148,30 @@ public class Server extends JFrame implements ActionListener {
 			while(true) {
 				float mouseX = dataInputStream.readFloat();
 				float mouseY = dataInputStream.readFloat();
+				int click = dataInputStream.readInt();
+				int keyCode = dataInputStream.readInt();
 				
 				try {
 					Robot robot = new Robot();
-					robot.mouseMove((int)mouseX, (int)mouseY);
-					System.out.println("Move mouse from client X: " + mouseX + ", Y: " + mouseY);
+					
+					// di chuyen con tro chuot
+//					robot.mouseMove((int)mouseX, (int)mouseY);
+					if(click == 1) {
+						robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+			            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+					} else if(click == 2){
+						robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+			            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+					}
+//					System.out.println("Move mouse from client X: " + mouseX + ", Y: " + mouseY);
+					
+					// lang nghe nhan phim
+					if(keyCode != -1) {
+//						robot.keyPress(keyCode);
+//						robot.keyRelease(keyCode);
+						System.out.println("Client da nhan phim: " + (char)keyCode);
+					}
+					
 				} catch(AWTException err) {
 					err.printStackTrace();
 				}

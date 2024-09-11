@@ -1,6 +1,6 @@
 package main;
 
 public class Port {
-	public static int port = 20; 
-	public static String ipAddress = "192.168.1.8";
+	public static int port = 1000; 
+	public static String ipAddress = "localhost";
 } 

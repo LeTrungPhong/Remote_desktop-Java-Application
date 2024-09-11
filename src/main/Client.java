@@ -10,6 +10,8 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -29,7 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-public class Client extends JFrame implements MouseListener, ActionListener, MouseMotionListener{
+public class Client extends JFrame implements MouseListener, ActionListener, MouseMotionListener, KeyListener {
 	private Socket socket = null;
 	private DataInputStream input = null;
 	private DataOutputStream out = null;
@@ -38,14 +40,18 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	private DataInputStream dataInputStream = null;
 	private static volatile int mouseX = -1;
 	private static volatile int mouseY = -1;
+	private static volatile int click = -1;
+	private static volatile int keyCode = -1;
+	private static boolean keyHeld = false;
+	private static boolean keyHeldSendClient = false;
 	private static int widthScreenServer = -1;
 	private static int heightScreenServer = -1;
 	private static float scale = 1;
-	
+
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
 		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
 
-		Graphics2D g2d = resizedImage.createGraphics();
+		Graphics2D g2d = resizedImage.createGraphics();	
 
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -56,22 +62,23 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 
 		return resizedImage;
 	}
-	
+
 	public void GUI() {
 		setTitle("Client");
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
 		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
-		
+
 //		setBounds(width / 2, height / 2, width, height);
 		setLayout(new GridBagLayout());
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+
 		jLabelScreen = new JLabel();
 		add(jLabelScreen);
-		
+
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		
+		addKeyListener(this);
+
 		setVisible(true);
 	}
 
@@ -79,11 +86,11 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	public Client(String address, int port) {
 
 		GUI();
-		
+
 		// establish a connection
 		try {
 			socket = new Socket(address, port);
-			System.out.println("Connected");
+			System.out.println("Connected to server");
 
 			// takes input from terminal
 			input = new DataInputStream(System.in);
@@ -92,75 +99,86 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			out = new DataOutputStream(socket.getOutputStream());
 			inputStream = socket.getInputStream();
 			dataInputStream = new DataInputStream(inputStream);
-			
-			
+
 			// dat lai kich thuoc
-			
+
 			widthScreenServer = dataInputStream.readInt();
 			heightScreenServer = dataInputStream.readInt();
-			
+
 			try {
-            	Robot robot = new Robot();
+				Robot robot = new Robot();
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				
+
 				double widthClient = screenSize.getWidth();
 				double heigthClient = screenSize.getHeight();
-				
-				while(true) {
-					if(widthClient > widthScreenServer || heigthClient > heightScreenServer) break;
+
+				while (true) {
+					if (widthClient > widthScreenServer && heigthClient > heightScreenServer)
+						break;
 					widthScreenServer = widthScreenServer * 4 / 5;
 					heightScreenServer = heightScreenServer * 4 / 5;
 					scale = scale * 4 / 5;
 				}
-				
-            } catch(AWTException err) {
-            	err.printStackTrace();
-            }
-			
+
+			} catch (AWTException err) {
+				err.printStackTrace();
+			}
+
 			setBounds(0, 0, widthScreenServer, heightScreenServer);
-			
+
 			Thread sendActionToServer = new Thread(() -> {
 				try {
-					while(true) {
+					while (true) {
 						out.writeFloat(mouseX / scale);
 						out.writeFloat(mouseY / scale);
-						System.out.println("Mouse to X: " + mouseX + ", Y: " + mouseY);
-						Thread.sleep(100);
+						out.writeInt(click);
+						if (keyHeldSendClient) {
+							out.writeInt(keyCode);
+							System.out.println("Key Typed send server: " + (char)(keyCode));
+//							System.out.println(3);
+							keyHeldSendClient = false;
+							keyCode = -1;
+						} else {
+							out.writeInt(-1);
+						}
+						click = -1;
+//						System.out.println("Mouse to X: " + mouseX + ", Y: " + mouseY);
+//						Thread.sleep(100);
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
-			
+
 			sendActionToServer.start();
-			
-			while(true) {
+
+			while (true) {
 				// Nhận dữ liệu từ server
-	            
-	            // Đọc kích thước của ảnh trước
-	            byte[] sizeAr = new byte[4];
-	            
-	            dataInputStream.readFully(sizeAr);
-	            // datadataInputStream
-	            
-	            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-	            
-	            // Nhận dữ liệu ảnh
-	            byte[] imageBytes = new byte[size];
-	            dataInputStream.readFully(imageBytes);
-	            // // datadataInputStream
-	            
-	            // Chuyển đổi lại thành BufferedImage
-	            BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));  
-	            
-	            BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
-	            
-	            if(receivedImage != null) {
-	            	jLabelScreen.setIcon(new ImageIcon(resizedImage));
-	            	repaint();
-	            }
+
+				// Đọc kích thước của ảnh trước
+				byte[] sizeAr = new byte[4];
+
+				dataInputStream.readFully(sizeAr);
+				// datadataInputStream
+
+				int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+
+				// Nhận dữ liệu ảnh
+				byte[] imageBytes = new byte[size];
+				dataInputStream.readFully(imageBytes);
+				// // datadataInputStream
+
+				// Chuyển đổi lại thành BufferedImage
+				BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+
+				BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
+
+				if (receivedImage != null) {
+					jLabelScreen.setIcon(new ImageIcon(resizedImage));
+					repaint();
+				}
 			}
-			
+
 		} catch (UnknownHostException u) {
 			System.out.println(u);
 			return;
@@ -176,7 +194,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 
@@ -189,14 +207,15 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		// TODO Auto-generated method stub
 		try {
 			Point point = e.getPoint();
-			
-			if(e.getButton() == MouseEvent.BUTTON1) {
+
+			if (e.getButton() == MouseEvent.BUTTON1) {
 //				System.out.println("You left click the mouse at " + point.x + " " + point.y);
-			} else if(e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+				click = 1;
+			} else if (e.getButton() == MouseEvent.BUTTON3) {
 //				System.out.println("You right click the mouse at " + point.x + " " + point.y);
+				click = 2;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -207,8 +226,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		try {
 			Point point = e.getPoint();
 //			System.out.println("You press the mouse at " + point.x + " " + point.y);
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -219,8 +237,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		try {
 			Point point = e.getPoint();
 //			System.out.println("You release the mouse at " + point.x + " " + point.y);
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -231,8 +248,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		try {
 			Point point = e.getPoint();
 //			System.out.println("You enter the window at " + point.x + " " + point.y);
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -243,8 +259,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		try {
 			Point point = e.getPoint();
 //			System.out.println("You exit the window at " + point.x + " " + point.y);
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -252,7 +267,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -269,5 +284,39 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		mouseX = e.getX();
 		mouseY = e.getY();
 //        System.out.println("Mouse moved to X: " + mouseX + ", Y: " + mouseY);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+//		System.out.println("Key Typed: " + e.getKeyChar());e
+//		keyTyped = e.getKeyChar();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+//		System.out.println("KeyPressed :" + e.getKeyChar());
+		if (!keyHeld && keyCode == -1) {
+			keyCode = e.getKeyCode();
+
+//			System.out.println("Phím đã được nhấn: " + e.getKeyChar());
+			keyHeld = true; // Đánh dấu là phím đang được giữ
+			keyHeldSendClient = true;
+		}
+//		keyHeld = true;
+//		System.out.println("1");
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+//		System.out.println("KeyReleased :" + e.getKeyChar());
+//		if(e.getKeyChar() == keyTyped && keyHeld) {
+////			keyHeld = true;
+////			System.out.println("2");
+//			
+//		}
+		keyHeld = false;
 	}
 }
