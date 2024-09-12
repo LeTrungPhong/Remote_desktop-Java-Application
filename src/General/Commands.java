@@ -1,4 +1,4 @@
-package main;
+package General;
 
 public enum Commands {
 	PRESS_MOUSE(-1),
@@ -6,7 +6,10 @@ public enum Commands {
 	PRESS_KEY(-3),
 	RELEASE_KEY(-4),
 	MOVE_MOUSE(-5),
-	CLICK_MOUSE(-6);
+	CLICK_MOUSE(-6),
+	SEND_SCREEN(-7),
+	INFOR_SCREEN(-8),
+	SIZE_SERVER(-9);
 
 	private int abbrev;
 

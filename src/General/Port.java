@@ -1,4 +1,4 @@
-package main;
+package General;
 
 public class Port {
 	public static int port = 1000; 

@@ -1,4 +1,4 @@
-package main;
+package General;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
