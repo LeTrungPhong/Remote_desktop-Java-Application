@@ -33,19 +33,14 @@ import javax.swing.WindowConstants;
 
 import General.Commands;
 import General.Port;
+import Server.ReceiveEvents;
+import Server.SendScreen;
 
-public class Client extends JFrame implements MouseListener, ActionListener, MouseMotionListener, KeyListener {
+public class Client extends JFrame {
 	private Socket socket = null;
-	private DataOutputStream out = null;
 	private JLabel jLabelScreen;
 	private InputStream inputStream = null;
 	private DataInputStream dataInputStream = null;
-//	private static volatile int mouseX = -1;
-//	private static volatile int mouseY = -1;
-//	private static volatile int click = -1;
-//	private static volatile int keyCode = -1;
-//	private static boolean keyHeld = false;
-//	private static boolean keyHeldSendClient = false;
 	private volatile int widthScreenServer = -1;
 	private volatile int heightScreenServer = -1;
 	private volatile static float scale = 1;
@@ -60,6 +55,10 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	
 	public int getHeightScreenServer() {
 		return heightScreenServer;
+	}
+	
+	public float getScale() {
+		return scale;
 	}
 
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
@@ -89,10 +88,6 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 		jLabelScreen = new JLabel();
 		add(jLabelScreen);
 
-		addMouseListener(this);
-		addMouseMotionListener(this);
-		addKeyListener(this);
-
 		setVisible(true);
 	}
 
@@ -107,7 +102,7 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 			System.out.println("Connected to server");
 
 			// sends output to the socket
-			out = new DataOutputStream(socket.getOutputStream());
+
 			inputStream = socket.getInputStream();
 			dataInputStream = new DataInputStream(inputStream);
 
@@ -165,6 +160,8 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 
 //			sendActionToServer.start();
 			
+			new SendEvents(this.socket,this,scale);
+			
 			new Thread(new ReceiveScreen(this.socket,this)).start();
 
 		} catch (UnknownHostException u) {
@@ -179,152 +176,5 @@ public class Client extends JFrame implements MouseListener, ActionListener, Mou
 	public static void main(String args[]) {
 		new Client(Port.ipAddress, Port.port);
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-			Point point = e.getPoint();
-
-			if (e.getButton() == MouseEvent.BUTTON1) {
-//				System.out.println("You left click the mouse at " + point.x + " " + point.y);
-//				click = 1;
-				out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
-				out.writeInt(MouseEvent.BUTTON1);
-				out.flush();
-//				System.out.println("MouseClicked_BUTTON1");
-			} else if (e.getButton() == MouseEvent.BUTTON3) {
-//				System.out.println("You right click the mouse at " + point.x + " " + point.y);
-//				click = 2;
-				out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
-				out.writeInt(MouseEvent.BUTTON3);
-				out.flush();
-//				System.out.println("MouseClicked_BUTTON3");
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-			Point point = e.getPoint();
-//			System.out.println("You press the mouse at " + point.x + " " + point.y);
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-			Point point = e.getPoint();
-//			System.out.println("You release the mouse at " + point.x + " " + point.y);
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-			Point point = e.getPoint();
-//			System.out.println("You enter the window at " + point.x + " " + point.y);
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-			Point point = e.getPoint();
-//			System.out.println("You exit the window at " + point.x + " " + point.y);
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-//		mouseX = e.getX();
-//		mouseY = e.getY();
-//        System.out.println("Mouse dragged to X: " + mouseX + ", Y: " + mouseY);
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-//		mouseX = e.getX();
-//		mouseY = e.getY();
-		try {
-			out.writeInt(Commands.MOVE_MOUSE.getAbbrev());
-			out.writeFloat(e.getX() / scale);
-			out.writeFloat(e.getY() / scale);
-			out.flush();
-//			System.out.println("MouseMoved X: " + e.getX() / scale + ", Y: " + e.getY() / scale);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-//        System.out.println("Mouse moved to X: " + mouseX + ", Y: " + mouseY);
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-//		System.out.println("Key Typed: " + e.getKeyChar());e
-//		keyTyped = e.getKeyChar();
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-//		System.out.println("KeyPressed :" + e.getKeyChar());
-//		if (!keyHeld) {
-//			keyCode = e.getKeyCode();
-//
-////			System.out.println("Phím đã được nhấn: " + e.getKeyChar());
-//			keyHeld = true; // Đánh dấu là phím đang được giữ
-//			keyHeldSendClient = true;
-//		}
-//		keyHeld = true;
-//		System.out.println("1");
-		
-//		if(!keyHeld) { keyHeld = true; }
-		
-		try {
-			out.writeInt(Commands.PRESS_KEY.getAbbrev());
-			out.writeInt(e.getKeyCode());
-			out.flush();
-//			System.out.println("KeyPressed :" + e.getKeyCode());
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-//		System.out.println("KeyReleased :" + e.getKeyChar());
-//		if(e.getKeyChar() == keyTyped && keyHeld) {
-////			keyHeld = true;
-////			System.out.println("2");
-//			
-//		}
-		
-	}
+	
 }

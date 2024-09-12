@@ -35,7 +35,7 @@ public class ReceiveEvents implements Runnable {
 						int keyCode = dataInputStream.readInt();
 //						robot.keyPress(keyCode);
 //						robot.keyRelease(keyCode);
-						System.out.println("KEY_PRESS");
+						System.out.println("KEY_PRESS : " + (char)keyCode);
 						break;
 					}
 					case -5: {
