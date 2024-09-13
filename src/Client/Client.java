@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Robot;
@@ -139,8 +140,10 @@ public class Client extends JFrame {
 				} catch (AWTException err) {
 					err.printStackTrace();
 				}
+				
+				Insets insets = this.getInsets();
 
-				setBounds(0, 0, widthScreenServer, heightScreenServer);
+				setBounds(0, 0, widthScreenServer + insets.left + insets.right, heightScreenServer + insets.bottom + insets.top);
 			}
 			
 			new SendEvents(this.socket,this,scale);

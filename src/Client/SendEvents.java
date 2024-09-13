@@ -1,5 +1,6 @@
 package Client;
 
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -91,9 +92,10 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 //		mouseX = e.getX();
 //		mouseY = e.getY();
 		try {
+			Insets insets = jFrame.getInsets();
 			out.writeInt(Commands.MOVE_MOUSE.getAbbrev());
-			out.writeFloat(e.getX() / this.scale);
-			out.writeFloat(e.getY() / this.scale);
+			out.writeFloat((e.getX() - insets.left) / this.scale);
+			out.writeFloat((e.getY() - insets.top) / this.scale);
 			out.flush();
 //			System.out.println("MouseMoved X: " + e.getX() / scale + ", Y: " + e.getY() / scale);
 		} catch (IOException e1) {

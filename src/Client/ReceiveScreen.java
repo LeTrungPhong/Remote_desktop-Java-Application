@@ -61,11 +61,11 @@ public class ReceiveScreen implements Runnable {
 					// Chuyển đổi lại thành BufferedImage
 					BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
 					
-					Insets insets = this.client.getInsets();
-					int contentWidth = widthScreenServer - insets.left - insets.right;
-					int contentHeight = heightScreenServer - insets.bottom - insets.top;
+//					Insets insets = this.client.getInsets();
+//					int contentWidth = widthScreenServer - insets.left - insets.right;
+//					int contentHeight = heightScreenServer - insets.bottom - insets.top;
 
-					BufferedImage resizedImage = Client.resizeImage(receivedImage, contentWidth, contentHeight);
+					BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
 
 					if (resizedImage != null) {
 						jlabelScreen.setIcon(new ImageIcon(resizedImage));
