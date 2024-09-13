@@ -2,6 +2,7 @@ package Server;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class ReceiveEvents implements Runnable {
 						float mouseX = dataInputStream.readFloat();
 						float mouseY = dataInputStream.readFloat();
 //						robot.mouseMove((int)mouseX, (int)mouseY);
-						System.out.println("MouseX: " + (int) mouseX + ", MouseY: " + (int) mouseY);
+						System.out.println("MouseX: " + mouseX + ", MouseY: " + mouseY);
 						break;
 					}
 					case -6: {

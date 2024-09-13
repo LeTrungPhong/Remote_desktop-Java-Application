@@ -3,6 +3,7 @@ package Client;
 import Client.Client;
 import General.Commands;
 
+import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -59,11 +60,16 @@ public class ReceiveScreen implements Runnable {
 
 					// Chuyển đổi lại thành BufferedImage
 					BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+					
+					Insets insets = this.client.getInsets();
+					int contentWidth = widthScreenServer - insets.left - insets.right;
+					int contentHeight = heightScreenServer - insets.bottom - insets.top;
 
-					BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
+					BufferedImage resizedImage = Client.resizeImage(receivedImage, contentWidth, contentHeight);
 
 					if (resizedImage != null) {
 						jlabelScreen.setIcon(new ImageIcon(resizedImage));
+						jlabelScreen.revalidate();
 						this.client.repaint();
 					}
 				}

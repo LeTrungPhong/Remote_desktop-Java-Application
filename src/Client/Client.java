@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
@@ -39,6 +40,8 @@ import Server.SendScreen;
 public class Client extends JFrame {
 	private Socket socket = null;
 	private JLabel jLabelScreen;
+	private JButton jButtonShutdown;
+	private JButton jButtonBlock;
 	private InputStream inputStream = null;
 	private DataInputStream dataInputStream = null;
 	private volatile int widthScreenServer = -1;
@@ -86,7 +89,14 @@ public class Client extends JFrame {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		jLabelScreen = new JLabel();
+		jButtonShutdown = new JButton("Shut down");
+		jButtonBlock = new JButton("Block");
+		
 		add(jLabelScreen);
+//		add(jButtonBlock);
+//		add(jButtonShutdown);
+		
+//		setUndecorated(true);
 
 		setVisible(true);
 	}
@@ -132,33 +142,6 @@ public class Client extends JFrame {
 
 				setBounds(0, 0, widthScreenServer, heightScreenServer);
 			}
-			
-//			Thread sendActionToServer = new Thread(() -> {
-//				try {
-//					while (true) {
-////						out.writeFloat(mouseX / scale);
-////						out.writeFloat(mouseY / scale);
-////						out.writeInt(click);
-////						if (keyHeldSendClient) {
-////							out.writeInt(keyCode);
-////							System.out.println("Key Typed send server: " + (char)(keyCode));
-//////							System.out.println(3);
-////							keyHeldSendClient = false;
-////							keyCode = -1;
-////						} else {
-////							out.writeInt(-1);
-////						}
-////						click = -1;
-////						System.out.println("Mouse to X: " + mouseX + ", Y: " + mouseY);
-////						Thread.sleep(100);
-////						out.flush();
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			});
-
-//			sendActionToServer.start();
 			
 			new SendEvents(this.socket,this,scale);
 			

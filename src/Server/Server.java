@@ -39,24 +39,6 @@ public class Server extends JFrame implements ActionListener {
 	private JButton jbutton;
 	private ServerSocket serverSocket = null;
 	private Socket socketClient = null;
-	private OutputStream outputStream = null;
-	private DataInputStream dataInputStream = null;
-	private DataOutputStream dataOutputStream = null;
-
-	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
-
-		Graphics2D g2d = resizedImage.createGraphics();
-
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-		g2d.dispose();
-
-		return resizedImage;
-	}
 
 	public void GUI() {
 		setTitle("Server");
@@ -81,10 +63,6 @@ public class Server extends JFrame implements ActionListener {
 
 			socketClient = serverSocket.accept();
 			System.out.println("Client connected");
-
-			dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
-			
-			dataInputStream = new DataInputStream(socketClient.getInputStream());
 			
 			new Thread(new SendScreen(socketClient)).start();
 
