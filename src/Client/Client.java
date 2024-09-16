@@ -103,7 +103,7 @@ public class Client extends JFrame {
 	}
 
 	// constructor to put ip address and port
-	public Client(String address, int port) {
+	public Client(String address, int port, String password) {
 
 		GUI();
 
@@ -159,8 +159,8 @@ public class Client extends JFrame {
 		}
 	}
 
-	public static void main(String args[]) {
-		new Client(Port.ipAddress, Port.port);
-	}
+//	public static void main(String args[]) {
+//		new Client(Port.ipAddress, Port.port, );
+//	}
 	
 }

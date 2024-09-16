@@ -34,26 +34,26 @@ import javax.swing.WindowConstants;
 
 import General.Port;
 
-public class Server extends JFrame implements ActionListener {
-	private JLabel jLabelScreen;
-	private JButton jbutton;
+public class Server {
+//	private JLabel jLabelScreen;
+//	private JButton jbutton;
 	private ServerSocket serverSocket = null;
 	private Socket socketClient = null;
 
 	public void GUI() {
-		setTitle("Server");
-		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
-		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
-
-		setBounds(width / 2, height / 2, width, height);
-		setLayout(new GridBagLayout());
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		jLabelScreen = new JLabel();
-		jbutton = new JButton("Screen");
-		add(jLabelScreen);
-
-		setVisible(true);
+//		setTitle("Server");
+//		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
+//		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
+//
+//		setBounds(width / 2, height / 2, width, height);
+//		setLayout(new GridBagLayout());
+//		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//
+//		jLabelScreen = new JLabel();
+//		jbutton = new JButton("Screen");
+//		add(jLabelScreen);
+//
+//		setVisible(true);
 	}
 
 	public void InitServer() {
@@ -78,15 +78,15 @@ public class Server extends JFrame implements ActionListener {
 		InitServer();
 	}
 
-	public static void main(String[] args) {
-		new Server();
-	}
+//	public static void main(String[] args) {
+//		new Server();
+//	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getSource() == jbutton) {
-
-		}
-	}
+//	@Override
+//	public void actionPerformed(ActionEvent e) {
+//		// TODO Auto-generated method stub
+//		if (e.getSource() == jbutton) {
+//
+//		}
+//	}
 }
