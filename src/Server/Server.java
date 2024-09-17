@@ -1,37 +1,13 @@
 package Server;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
-
+import General.Commands;
 import General.Port;
 
 public class Server {
@@ -39,6 +15,10 @@ public class Server {
 //	private JButton jbutton;
 	private ServerSocket serverSocket = null;
 	private Socket socketClient = null;
+	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
+	private volatile String password;
+	private volatile boolean checkConnect = false;
 
 	public void GUI() {
 //		setTitle("Server");
@@ -60,33 +40,52 @@ public class Server {
 		try {
 			serverSocket = new ServerSocket(Port.port);
 			System.out.println("Server is running...");
-
-			socketClient = serverSocket.accept();
-			System.out.println("Client connected");
+			
+			while(true) {
+				socketClient = serverSocket.accept();
+				System.out.println("Client connected");
+				
+				dataInputStream = new DataInputStream(socketClient.getInputStream());
+				dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
+				
+				while(true) {
+					if(dataInputStream.readInt() == Commands.REQUEST_CONNECT.getAbbrev()) {
+						String passwordClient = dataInputStream.readUTF();
+						System.out.println(passwordClient + " " + this.password);
+						if(passwordClient.equals(this.password)) {
+							System.out.println("Mat khau hop le");
+							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
+							dataOutputStream.writeBoolean(true);
+							checkConnect = true;
+						} else {
+							System.out.println("Mat khau khong hop le");
+							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
+							dataOutputStream.writeBoolean(false);
+						}
+						break;
+					}
+				}
+				if(checkConnect) {
+					break;
+				}
+			}
 			
 			new Thread(new SendScreen(socketClient)).start();
 
 			new Thread(new ReceiveEvents(socketClient)).start();
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public Server() {
+	public Server(String password) {
+		this.password = password;
 		GUI();
 		InitServer();
 	}
 
 //	public static void main(String[] args) {
 //		new Server();
-//	}
-
-//	@Override
-//	public void actionPerformed(ActionEvent e) {
-//		// TODO Auto-generated method stub
-//		if (e.getSource() == jbutton) {
-//
-//		}
 //	}
 }

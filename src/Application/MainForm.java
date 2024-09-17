@@ -46,8 +46,7 @@ public class MainForm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainForm frame = new MainForm();
-					frame.setVisible(true);
+					new MainForm();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,6 +58,7 @@ public class MainForm extends JFrame {
 	 * Create the frame.
 	 */
 	public MainForm() {
+		setTitle("Desktop Remote");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 515, 397);
@@ -161,6 +161,9 @@ public class MainForm extends JFrame {
 		passwordFieldPartnerPassWord = new JPasswordField();
 		passwordFieldPartnerPassWord.setBounds(79, 97, 136, 20);
 		panel_1.add(passwordFieldPartnerPassWord);
+		
+		setIPaddress();
+		setPassWord();
 
 		JButton btnStartRemote = new JButton("Bat dau dieu khien");
 		btnStartRemote.addActionListener(new ActionListener() {
@@ -172,15 +175,25 @@ public class MainForm extends JFrame {
 				if(IPPartner.isEmpty() || passwordPartner.isEmpty()) {
 					JOptionPane.showMessageDialog(MainForm.this, "Khong duoc bo trong IP hoac password", "Thong bao", JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					new Client(IPPartner, Port.port, passwordPartner);
+					new Client("localhost", Port.port, passwordPartner);
 				}
 			}
 		});
 		btnStartRemote.setBounds(291, 148, 156, 23);
 		contentPane.add(btnStartRemote);
 		
-		setIPaddress();
-		setPassWord();
+		setVisible(true);
+		
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Server server = new Server(passWord);
+				
+			}
+			
+		}).start();;
 	}
 
 	public void setMACaddress() {
@@ -219,6 +232,7 @@ public class MainForm extends JFrame {
         int max = 99999;
         int randomNumber = random.nextInt(max - min + 1) + min;
         System.out.println("Random number between " + min + " and " + max + ": " + randomNumber);
+        this.passWord = Integer.toString(randomNumber);
         textFieldMyPassWord.setText(Integer.toString(randomNumber));
 	}
 }

@@ -9,7 +9,9 @@ public enum Commands {
 	CLICK_MOUSE(-6),
 	SEND_SCREEN(-7),
 	INFOR_SCREEN(-8),
-	SIZE_SERVER(-9);
+	SIZE_SERVER(-9),
+	REQUEST_CONNECT(-10),
+	RESPONSE_CONNECT(-11);
 
 	private int abbrev;
 

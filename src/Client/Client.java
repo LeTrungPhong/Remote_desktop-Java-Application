@@ -45,6 +45,7 @@ public class Client extends JFrame {
 	private JButton jButtonBlock;
 	private InputStream inputStream = null;
 	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
 	private volatile int widthScreenServer = -1;
 	private volatile int heightScreenServer = -1;
 	private volatile static float scale = 1;
@@ -116,6 +117,23 @@ public class Client extends JFrame {
 
 			inputStream = socket.getInputStream();
 			dataInputStream = new DataInputStream(inputStream);
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			
+			dataOutputStream.writeInt(Commands.REQUEST_CONNECT.getAbbrev());
+			dataOutputStream.writeUTF(password);
+			
+			while(true) {
+				if(dataInputStream.readInt() == Commands.RESPONSE_CONNECT.getAbbrev()) {
+					if(dataInputStream.readBoolean()) {
+						System.out.println("Mat khau hop le");
+						break;
+					} else {
+						System.out.println("Mat khau khong hop le");
+						socket.close();
+						return;
+					}
+				}
+			}
 
 			if(dataInputStream.readInt() == Commands.SIZE_SERVER.getAbbrev()) {
 				// dat lai kich thuoc
