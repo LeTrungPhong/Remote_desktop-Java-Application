@@ -11,7 +11,11 @@ public enum Commands {
 	INFOR_SCREEN(-8),
 	SIZE_SERVER(-9),
 	REQUEST_CONNECT(-10),
-	RESPONSE_CONNECT(-11);
+	RESPONSE_CONNECT(-11),
+	EVENTS(-12),
+	SCREEN(-13),
+	REQUEST_PROCESS(-14),
+	RESPONSE_PROCESS(-15);
 
 	private int abbrev;
 

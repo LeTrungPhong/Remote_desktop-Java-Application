@@ -1,9 +1,7 @@
 package Client;
 
-import Client.Client;
 import General.Commands;
 
-import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -15,7 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-public class ReceiveScreen implements Runnable {
+public class ReceiveScreen {
 	
 	private Socket socket = null;
 	private DataInputStream dataInputStream = null;
@@ -33,53 +31,56 @@ public class ReceiveScreen implements Runnable {
 		jlabelScreen = this.client.getLabelScreen();
 		dataInputStream = new DataInputStream(socket.getInputStream());
 	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		try {
-			while (true) {
-				if(dataInputStream.readInt() == Commands.INFOR_SCREEN.getAbbrev()
-						&& widthScreenServer != -1
-						&& heightScreenServer != -1) {
-					
-					// Nhận dữ liệu từ server
-
-					// Đọc kích thước của ảnh trước
-					byte[] sizeAr = new byte[4];
-					
-					dataInputStream.readFully(sizeAr);
-					// datadataInputStream
-
-					int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-
-					// Nhận dữ liệu ảnh
-					byte[] imageBytes = new byte[size];
-					dataInputStream.readFully(imageBytes);
-					// // datadataInputStream
-
-					// Chuyển đổi lại thành BufferedImage
-					BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-					
-//					Insets insets = this.client.getInsets();
-//					int contentWidth = widthScreenServer - insets.left - insets.right;
-//					int contentHeight = heightScreenServer - insets.bottom - insets.top;
-
-					BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
-
-					if (resizedImage != null) {
-						jlabelScreen.setIcon(new ImageIcon(resizedImage));
-						jlabelScreen.revalidate();
-						this.client.repaint();
-					}
-				}
-			}
+	public void receiveScreenByCommands(int command) throws IOException {
+		if(command == Commands.INFOR_SCREEN.getAbbrev()
+				&& widthScreenServer != -1
+				&& heightScreenServer != -1) {
 			
-//			System.out.println(dataInputStream.readInt());
-		} catch(IOException err) {
-			err.printStackTrace();
+			// Nhận dữ liệu từ server
+
+			// Đọc kích thước của ảnh trước
+			byte[] sizeAr = new byte[4];
+			
+			dataInputStream.readFully(sizeAr);
+			// datadataInputStream
+
+			int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+
+			// Nhận dữ liệu ảnh
+			byte[] imageBytes = new byte[size];
+			dataInputStream.readFully(imageBytes);
+			// // datadataInputStream
+
+			// Chuyển đổi lại thành BufferedImage
+			BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			
+//			Insets insets = this.client.getInsets();
+//			int contentWidth = widthScreenServer - insets.left - insets.right;
+//			int contentHeight = heightScreenServer - insets.bottom - insets.top;
+
+			BufferedImage resizedImage = Client.resizeImage(receivedImage, widthScreenServer, heightScreenServer);
+
+			if (resizedImage != null) {
+				jlabelScreen.setIcon(new ImageIcon(resizedImage));
+				jlabelScreen.revalidate();
+				this.client.repaint();
+			}
 		}
 	}
+
+//	@Override
+//	public void run() {
+//		// TODO Auto-generated method stub
+//		try {
+//			while (true) {
+//				
+//			}
+//			
+////			System.out.println(dataInputStream.readInt());
+//		} catch(IOException err) {
+//			err.printStackTrace();
+//		}
+//	}
 
 	public Socket getSocket() {
 		return socket;

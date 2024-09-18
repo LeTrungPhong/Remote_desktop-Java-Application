@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import Client.Client;
@@ -25,7 +26,13 @@ import java.util.Random;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.JPasswordField;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
 
 public class MainForm extends JFrame {
 
@@ -69,7 +76,7 @@ public class MainForm extends JFrame {
 		contentPane.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(22, 11, 225, 128);
+		panel.setBounds(22, 11, 225, 147);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
@@ -77,7 +84,10 @@ public class MainForm extends JFrame {
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel.setForeground(new Color(1, 185, 254));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(10, 11, 193, 14);
+		lblNewLabel.setBounds(10, 11, 205, 27);
+//        Border padding = new EmptyBorder(10, 10, 0, 0); 
+        Border lineBorder = BorderFactory.createLineBorder(Color.GRAY, 1); 
+		lblNewLabel.setBorder(lineBorder); 
 		panel.add(lblNewLabel);
 
 		JTextArea txtrHayGuiId = new JTextArea();
@@ -86,28 +96,28 @@ public class MainForm extends JFrame {
 		txtrHayGuiId.setEditable(false);
 		txtrHayGuiId.setLineWrap(true);
 		txtrHayGuiId.setWrapStyleWord(true);
-		txtrHayGuiId.setFocusable(false);
+		txtrHayGuiId.setFocusable(false);  
 		txtrHayGuiId.setHighlighter(null);
 		txtrHayGuiId.setText(
 				"Hay gui ID va Mat Khau duoi day cho doi tac neu ban muon cho ho dieu khien may tinh cua minh");
-		txtrHayGuiId.setBounds(10, 36, 205, 28);
+		txtrHayGuiId.setBounds(10, 49, 205, 28);
 		panel.add(txtrHayGuiId);
 
 		JLabel lblNewLabel_1 = new JLabel("IP cua ban");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblNewLabel_1.setBounds(10, 75, 63, 14);
+		lblNewLabel_1.setBounds(10, 91, 63, 14);
 		panel.add(lblNewLabel_1);
 
 		JLabel lblNewLabel_1_1 = new JLabel("Mat khau");
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblNewLabel_1_1.setBounds(10, 100, 63, 14);
+		lblNewLabel_1_1.setBounds(10, 119, 63, 14);
 		panel.add(lblNewLabel_1_1);
 
 		textFieldMyID = new JTextField();
 		textFieldMyID.setForeground(new Color(0, 0, 0));
 		textFieldMyID.setBackground(new Color(225, 225, 225));
 		textFieldMyID.setEditable(false);
-		textFieldMyID.setBounds(83, 72, 120, 20);
+		textFieldMyID.setBounds(83, 88, 132, 20);
 //		textFieldMyID.setFocusable(false);
 		panel.add(textFieldMyID);
 		textFieldMyID.setColumns(10);
@@ -116,12 +126,13 @@ public class MainForm extends JFrame {
 		textFieldMyPassWord.setBackground(new Color(225, 225, 225));
 		textFieldMyPassWord.setEditable(false);
 		textFieldMyPassWord.setColumns(10);
-		textFieldMyPassWord.setBounds(83, 97, 120, 20);
+		textFieldMyPassWord.setBounds(83, 116, 132, 20);
 //		textFieldMyPassWord.setFocusable(false);
 		panel.add(textFieldMyPassWord);
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(252, 11, 225, 128);
+		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel_1.setBounds(252, 11, 225, 147);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 
@@ -129,7 +140,9 @@ public class MainForm extends JFrame {
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel_2.setForeground(new Color(1, 185, 254));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2.setBounds(10, 11, 205, 14);
+		lblNewLabel_2.setBounds(10, 11, 205, 27);
+//		MatteBorder bottomBorder = new MatteBorder(0, 0, 1, 0, Color.GRAY);
+		lblNewLabel_2.setBorder(lineBorder);
 		panel_1.add(lblNewLabel_2);
 
 		JTextArea txtrHayNhapId = new JTextArea();
@@ -140,32 +153,33 @@ public class MainForm extends JFrame {
 		txtrHayNhapId.setFocusable(false);
 		txtrHayNhapId.setEditable(false);
 		txtrHayNhapId.setBackground(UIManager.getColor("Button.background"));
-		txtrHayNhapId.setBounds(10, 36, 205, 28);
+		txtrHayNhapId.setBounds(10, 52, 205, 28);
 		panel_1.add(txtrHayNhapId);
 
 		JLabel lblNewLabel_1_2 = new JLabel("IP doi tac");
 		lblNewLabel_1_2.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblNewLabel_1_2.setBounds(10, 75, 63, 14);
+		lblNewLabel_1_2.setBounds(10, 91, 63, 14);
 		panel_1.add(lblNewLabel_1_2);
 
 		textFieldPartnerID = new JTextField();
 		textFieldPartnerID.setColumns(10);
-		textFieldPartnerID.setBounds(79, 72, 136, 20);
+		textFieldPartnerID.setBounds(79, 88, 136, 20);
 		panel_1.add(textFieldPartnerID);
 
 		JLabel lblNewLabel_1_1_1 = new JLabel("Mat khau");
 		lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblNewLabel_1_1_1.setBounds(10, 100, 63, 14);
+		lblNewLabel_1_1_1.setBounds(10, 119, 63, 14);
 		panel_1.add(lblNewLabel_1_1_1);
 
 		passwordFieldPartnerPassWord = new JPasswordField();
-		passwordFieldPartnerPassWord.setBounds(79, 97, 136, 20);
+		passwordFieldPartnerPassWord.setBounds(79, 116, 136, 20);
 		panel_1.add(passwordFieldPartnerPassWord);
 		
 		setIPaddress();
 		setPassWord();
 
 		JButton btnStartRemote = new JButton("Bat dau dieu khien");
+		btnStartRemote.setBackground(new Color(245, 245, 245));
 		btnStartRemote.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String IPPartner = textFieldPartnerID.getText();
@@ -179,21 +193,12 @@ public class MainForm extends JFrame {
 				}
 			}
 		});
-		btnStartRemote.setBounds(291, 148, 156, 23);
+		btnStartRemote.setBounds(293, 169, 156, 23);
 		contentPane.add(btnStartRemote);
 		
 		setVisible(true);
 		
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				Server server = new Server(passWord);
-				
-			}
-			
-		}).start();;
+		new Thread(new runThreadServer(passWord)).start();
 	}
 
 	public void setMACaddress() {

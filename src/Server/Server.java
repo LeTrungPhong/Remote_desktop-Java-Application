@@ -72,7 +72,9 @@ public class Server {
 			
 			new Thread(new SendScreen(socketClient)).start();
 
-			new Thread(new ReceiveEvents(socketClient)).start();
+//			new Thread(new ReceiveEvents(socketClient)).start();
+			
+			new Thread(new CentralReader(socketClient)).start();
 			
 		} catch (IOException e) {
 			e.printStackTrace();

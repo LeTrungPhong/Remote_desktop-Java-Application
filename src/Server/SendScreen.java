@@ -70,6 +70,7 @@ public class SendScreen implements Runnable {
 
 				
 
+				dataOutputStream.writeInt(Commands.SCREEN.getAbbrev());
 				dataOutputStream.writeInt(Commands.INFOR_SCREEN.getAbbrev());
 				dataOutputStream.write(imageBytes);
 				dataOutputStream.write(baos.toByteArray());

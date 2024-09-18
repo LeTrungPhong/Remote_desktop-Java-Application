@@ -57,6 +57,7 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 //		if(!keyHeld) { keyHeld = true; }
 		
 		try {
+			out.writeInt(Commands.EVENTS.getAbbrev());
 			out.writeInt(Commands.PRESS_KEY.getAbbrev());
 			out.writeInt(e.getKeyCode());
 			out.flush();
@@ -93,6 +94,7 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 //		mouseY = e.getY();
 		try {
 			Insets insets = jFrame.getInsets();
+			out.writeInt(Commands.EVENTS.getAbbrev());
 			out.writeInt(Commands.MOVE_MOUSE.getAbbrev());
 			out.writeFloat((e.getX() - insets.left) / this.scale);
 			out.writeFloat((e.getY() - insets.top) / this.scale);
@@ -114,6 +116,7 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 					if (e.getButton() == MouseEvent.BUTTON1) {
 //						System.out.println("You left click the mouse at " + point.x + " " + point.y);
 //						click = 1;
+						out.writeInt(Commands.EVENTS.getAbbrev());
 						out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
 						out.writeInt(MouseEvent.BUTTON1);
 						out.flush();
@@ -121,6 +124,7 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 					} else if (e.getButton() == MouseEvent.BUTTON3) {
 //						System.out.println("You right click the mouse at " + point.x + " " + point.y);
 //						click = 2;
+						out.writeInt(Commands.EVENTS.getAbbrev());
 						out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
 						out.writeInt(MouseEvent.BUTTON3);
 						out.flush();
