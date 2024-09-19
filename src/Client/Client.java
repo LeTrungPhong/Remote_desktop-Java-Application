@@ -2,6 +2,7 @@ package Client;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -40,27 +41,37 @@ public class Client extends JFrame {
 	private volatile int widthScreenServer = -1;
 	private volatile int heightScreenServer = -1;
 	private volatile static float scale = 1;
-	
+	private RemoteForm remoteForm = null;
+	private ProcessManagementForm processManagementForm = null;
+
 	public JLabel getLabelScreen() {
 		return this.jLabelScreen;
 	}
-	
+
 	public int getWidthScreenServer() {
 		return widthScreenServer;
 	}
-	
+
 	public int getHeightScreenServer() {
 		return heightScreenServer;
 	}
-	
+
 	public float getScale() {
 		return scale;
+	}
+	
+	public RemoteForm getRemoteForm() {
+		return remoteForm;
+	}
+	
+	public ProcessManagementForm getProcessManagementForm() {
+		return processManagementForm;
 	}
 
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
 		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
 
-		Graphics2D g2d = resizedImage.createGraphics();	
+		Graphics2D g2d = resizedImage.createGraphics();
 
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -74,6 +85,7 @@ public class Client extends JFrame {
 
 	public void GUI() {
 		setTitle("Client");
+		setResizable(false);
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
 		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
 
@@ -85,28 +97,28 @@ public class Client extends JFrame {
 		jButtonShutdown = new JButton("Shut down");
 		jButtonBlock = new JButton("Block");
 		jButtonGetProcess = new JButton("GET PROCESS");
-		
-		jButtonGetProcess.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		
+
+//		jButtonGetProcess.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				try {
+//					dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//			}
+//		});
+
 		add(jLabelScreen);
-		add(jButtonGetProcess);
+//		add(jButtonGetProcess);
 //		add(jButtonBlock);
 //		add(jButtonShutdown);
-		
+
 //		setUndecorated(true);
-		
-		
 
 		setVisible(true);
+
+		
 	}
 
 	// constructor to put ip address and port
@@ -117,6 +129,7 @@ public class Client extends JFrame {
 		// establish a connection
 		try {
 			socket = new Socket(address, port);
+			processManagementForm = new ProcessManagementForm(socket);
 			System.out.println("Connected to server");
 
 			// sends output to the socket
@@ -124,13 +137,13 @@ public class Client extends JFrame {
 			inputStream = socket.getInputStream();
 			dataInputStream = new DataInputStream(inputStream);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			
+
 			dataOutputStream.writeInt(Commands.REQUEST_CONNECT.getAbbrev());
 			dataOutputStream.writeUTF(password);
-			
-			while(true) {
-				if(dataInputStream.readInt() == Commands.RESPONSE_CONNECT.getAbbrev()) {
-					if(dataInputStream.readBoolean()) {
+
+			while (true) {
+				if (dataInputStream.readInt() == Commands.RESPONSE_CONNECT.getAbbrev()) {
+					if (dataInputStream.readBoolean()) {
 						System.out.println("Mat khau hop le");
 						break;
 					} else {
@@ -141,7 +154,7 @@ public class Client extends JFrame {
 				}
 			}
 
-			if(dataInputStream.readInt() == Commands.SIZE_SERVER.getAbbrev()) {
+			if (dataInputStream.readInt() == Commands.SIZE_SERVER.getAbbrev()) {
 				// dat lai kich thuoc
 				widthScreenServer = dataInputStream.readInt();
 				heightScreenServer = dataInputStream.readInt();
@@ -156,23 +169,35 @@ public class Client extends JFrame {
 					while (true) {
 						if (widthClient > widthScreenServer && heigthClient > heightScreenServer)
 							break;
-						widthScreenServer = widthScreenServer * 4 / 5;
-						heightScreenServer = heightScreenServer * 4 / 5;
-						scale = scale * 4 / 5;
+						widthScreenServer = widthScreenServer * 2 / 5;
+						heightScreenServer = heightScreenServer * 2 / 5;
+						scale = scale * 2 / 5;
 					}
 
 				} catch (AWTException err) {
 					err.printStackTrace();
 				}
-				
+
 				Insets insets = this.getInsets();
 
-				setBounds(0, 0, widthScreenServer + insets.left + insets.right, heightScreenServer + insets.bottom + insets.top);
+				setBounds(0, 0, widthScreenServer + insets.left + insets.right,
+						heightScreenServer + insets.bottom + insets.top);
 			}
+
+			new SendEvents(this.socket, this, scale);
+
+			new Thread(new CentralReader(this.socket, this)).start();
 			
-			new SendEvents(this.socket,this,scale);
-			
-			new Thread(new CentralReader(this.socket,this)).start();
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						remoteForm = new RemoteForm(socket,processManagementForm);
+						remoteForm.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 
 		} catch (UnknownHostException u) {
 			System.out.println(u);
@@ -181,10 +206,12 @@ public class Client extends JFrame {
 			System.out.println(i);
 			return;
 		}
+		
+		
 	}
 
 //	public static void main(String args[]) {
 //		new Client(Port.ipAddress, Port.port, );
 //	}
-	
+
 }

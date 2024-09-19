@@ -14,10 +14,14 @@ public class CentralReader implements Runnable {
 	private Socket socket = null;
 	private DataInputStream dataInputStream = null;
 	private ReceiveScreen receiveScreen = null;
+	private RemoteForm remoteForm = null;
+	private ProcessManagementForm processManagementForm = null;
 	
 	public CentralReader(Socket socket, Client client) throws IOException {
 		this.setClient(client);
 		this.setSocket(socket);
+		this.setRemoteForm(client.getRemoteForm());
+		processManagementForm = client.getProcessManagementForm();
 		dataInputStream = new DataInputStream(socket.getInputStream());
 		receiveScreen = new ReceiveScreen(socket, client);
 	}
@@ -49,10 +53,12 @@ public class CentralReader implements Runnable {
 						list.add(new ProcessWindow(ImageName, PID, SessionName, SessionIDs, MemUsage));
 					}
 					
-					for (ProcessWindow processWindow : list) {
-						System.out.println(processWindow);
-					}
+//					for (ProcessWindow processWindow : list) {
+//						System.out.println(processWindow);
+//					}
 					
+					processManagementForm.setListProcess(list);
+			
 					break;
 				}
 				default:
@@ -80,6 +86,14 @@ public class CentralReader implements Runnable {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public RemoteForm getRemoteForm() {
+		return remoteForm;
+	}
+
+	public void setRemoteForm(RemoteForm remoteForm) {
+		this.remoteForm = remoteForm;
 	}
 
 }
