@@ -5,10 +5,12 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
@@ -83,20 +85,25 @@ public class CentralReader implements Runnable {
 				case -19: {
 					System.out.println("Nhan thong bao tat process");
 					String pid = dataInputStream.readUTF();
-					try {
-			            String os = System.getProperty("os.name").toLowerCase();
-			            String command;
-			            if (os.contains("win")) {
-			                command = "taskkill /PID " + pid;
-			            } else {
-			                command = "kill -9 " + pid;
-			            }
-			            Runtime.getRuntime().exec(command);
-			            System.out.println("Process " + pid + " terminated.");
-			        } catch (IOException e) {
-			        	dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
-						dataOutputStream.writeUTF("Không tìm thấy:" + pid);
-			        }
+		            
+		            if (!this.checkRunningProcess(pid)){
+		            	dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
+		            	dataOutputStream.writeUTF("Không tìm thấy:" + pid);
+		            	break;
+		            }
+		            String os = System.getProperty("os.name").toLowerCase();
+		            String command;
+		            if (os.contains("win")) {
+		                command = "taskkill /PID " + pid;
+		            } else {
+		                command = "kill -9 " + pid;
+		            }
+		            Runtime.getRuntime().exec(command);
+		            
+//		            if (this.checkRunningProcess(pid)) {
+//		                dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
+//		                dataOutputStream.writeUTF("Không thể tắt process với PID: " + pid);
+//		            } 
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );
@@ -107,6 +114,37 @@ public class CentralReader implements Runnable {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+	
+	Boolean checkRunningProcess(String pid) {
+		String os = System.getProperty("os.name").toLowerCase();
+	    String command;
+	    if (os.contains("win")) {
+	        command = "tasklist /FI \"PID eq " + pid + "\"";
+	    } else {
+	        command = "ps -p " + pid;
+	    }
+
+	    try {
+	        Process checkProcess = Runtime.getRuntime().exec(command);
+
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(checkProcess.getInputStream()));
+	        String line;
+	        boolean processExists = false;
+
+	        while ((line = reader.readLine()) != null) {
+	            if (line.contains(pid)) {
+	                processExists = true;
+	                break;
+	            }
+	        }
+
+	        checkProcess.waitFor(); // Chờ lệnh hoàn thành
+	        return processExists;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return false;
+        }
 	}
 
 	public Socket getSocket() {

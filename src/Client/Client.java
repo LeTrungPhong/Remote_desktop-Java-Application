@@ -200,10 +200,10 @@ public class Client extends JFrame {
 			});
 
 		} catch (UnknownHostException u) {
-			System.out.println(u);
+			System.out.println("Lỗi U: " + u);
 			return;
 		} catch (IOException i) {
-			System.out.println(i);
+			System.out.println("Lỗi I " + i);
 			return;
 		}
 		
