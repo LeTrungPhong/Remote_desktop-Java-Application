@@ -27,27 +27,27 @@ public class ReceiveEvents {
 			switch (command) {
 			case -3: {
 				int keyCode = dataInputStream.readInt();
-//				robot.keyPress(keyCode);
-//				robot.keyRelease(keyCode);
+				robot.keyPress(keyCode);
+				robot.keyRelease(keyCode);
 				System.out.println("KEY_PRESS : " + (char)keyCode);
 				break;
 			}
 			case -5: {
 				float mouseX = dataInputStream.readFloat();
 				float mouseY = dataInputStream.readFloat();
-//				robot.mouseMove((int)mouseX, (int)mouseY);
+				robot.mouseMove((int)mouseX, (int)mouseY);
 				System.out.println("MouseX: " + mouseX + ", MouseY: " + mouseY);
 				break;
 			}
 			case -6: {
 				int mouseEvent = dataInputStream.readInt();
 				if (mouseEvent == MouseEvent.BUTTON1) {
-//					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-//		            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+		            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 					System.out.println("MouseEvent_BUTTON1");
 				} else if (mouseEvent == MouseEvent.BUTTON3) {
-//					robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
-//		            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+					robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+		            robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
 					System.out.println("MouseEvent_BUTTON3");
 				}
 				break;

@@ -32,7 +32,7 @@ public class CentralReader implements Runnable {
 		while(true) {
 			try {
 				int type = dataInputStream.readInt();
-				System.out.println("type: " + type);
+//				System.out.println("type: " + type);
 				switch (type) {
 				case -13: {
 					receiveScreen.receiveScreenByCommands(dataInputStream.readInt());

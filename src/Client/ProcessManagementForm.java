@@ -1,5 +1,6 @@
 package Client;
 
+import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -90,10 +91,33 @@ public class ProcessManagementForm extends JFrame {
 		contentPane.add(btnGetListProcess);
 		
 		JButton btnStart = new JButton("Start");
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(textFieldProcess.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(ProcessManagementForm.this, "Khong duoc bo trong", "Thong bao", JOptionPane.WARNING_MESSAGE);
+				} else {
+					try {
+						dataOutputStream.writeInt(Commands.REQUEST_START_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF(textFieldProcess.getText().trim());
+						dataOutputStream.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		btnStart.setBounds(10, 200, 109, 23);
 		contentPane.add(btnStart);
 		
 		JButton btnStop = new JButton("Stop");
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(textFieldProcess.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(ProcessManagementForm.this, "Khong duoc bo trong", "Thong bao", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 		btnStop.setBounds(10, 227, 109, 23);
 		contentPane.add(btnStop);
 		
@@ -109,12 +133,6 @@ public class ProcessManagementForm extends JFrame {
 		
 		 // Định nghĩa tên cột cho bảng
 	    String[] columnNames = { "ImageName", "PID", "SessionName", "SessionIDs", "MemUsage" };
-	    
-//		private String ImageName;
-//		private int PID;
-//		private String SessionName;
-//		private int SessionIDs;
-//		private String MemUsage;
 	    
 	    // Chuyển đổi LinkedList thành mảng 2 chiều
 	    Object[][] data = new Object[list.size()][5];

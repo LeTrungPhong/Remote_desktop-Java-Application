@@ -15,7 +15,9 @@ public enum Commands {
 	EVENTS(-12),
 	SCREEN(-13),
 	REQUEST_PROCESS(-14),
-	RESPONSE_PROCESS(-15);
+	RESPONSE_PROCESS(-15),
+	REQUEST_START_PROCESS(-16),
+	RESPONSE_START_PROCESS(-17);
 
 	private int abbrev;
 

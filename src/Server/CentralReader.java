@@ -24,7 +24,7 @@ public class CentralReader implements Runnable {
 		while(true) {
 			try {
 				int type = dataInputStream.readInt();
-				System.out.println("type: " + type);
+//				System.out.println("type: " + type);
 				switch (type) {
 				case -12: {
 					receiveEvents.executeEventsByCommands(dataInputStream.readInt());
@@ -33,6 +33,16 @@ public class CentralReader implements Runnable {
 				case -14: {
 					sendProcess.sendProcess();
 					break;
+				}
+				case -16: {
+					System.out.println("Nhan thong bao khoi tao process");
+					String ImageName = dataInputStream.readUTF();
+					
+					ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
+					Process process = processBuilder.start();
+					
+					int exitProcess = process.exitValue();
+					System.out.println("Tien trinh ket thuc: " + exitProcess);
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );
