@@ -1,19 +1,30 @@
 package Server;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
+import javax.imageio.ImageIO;
 
 public class CentralReader implements Runnable {
 	
 	private Socket socket = null;
 	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
 	
 	public CentralReader(Socket socket) throws IOException {
 		this.setSocket(socket);
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
+		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
 	}
@@ -43,6 +54,21 @@ public class CentralReader implements Runnable {
 					
 					int exitProcess = process.exitValue();
 					System.out.println("Tien trinh ket thuc: " + exitProcess);
+					break;
+				}
+				case -18: {
+					Robot robot = new Robot();
+					System.out.println("Nhan yeu chup man hinh");
+					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+					Rectangle screenRect = new Rectangle(screenSize);
+					BufferedImage screenCapture = robot.createScreenCapture(screenRect);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(screenCapture, "jpg", baos);
+//					dataOutputStream.write(imageBytes);
+					dataOutputStream.write(baos.toByteArray());
+					dataOutputStream.flush();
+					System.out.println("");
+					break;
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );

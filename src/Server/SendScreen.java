@@ -43,7 +43,7 @@ public class SendScreen implements Runnable {
 			while (true) {
 				// chup man hinh
 				BufferedImage screenCapture = robot.createScreenCapture(screenRect);
-
+				
 				// sua lai kich thuoc
 //				BufferedImage resizedImage = Server.resizeImage(screenCapture, getWidth(), getHeight());
 

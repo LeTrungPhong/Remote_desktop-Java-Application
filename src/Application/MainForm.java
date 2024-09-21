@@ -189,7 +189,7 @@ public class MainForm extends JFrame {
 				if(IPPartner.isEmpty() || passwordPartner.isEmpty()) {
 					JOptionPane.showMessageDialog(MainForm.this, "Khong duoc bo trong IP hoac password", "Thong bao", JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					new Client("localhost", Port.port, passwordPartner);
+					new Client(textFieldPartnerID.getText(), Port.port, passwordPartner);
 				}
 			}
 		});
