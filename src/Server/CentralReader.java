@@ -1,19 +1,24 @@
 package Server;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
+import General.Commands;
 
 public class CentralReader implements Runnable {
 	
 	private Socket socket = null;
 	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
 	
 	public CentralReader(Socket socket) throws IOException {
 		this.setSocket(socket);
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
+		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
 	}
@@ -35,14 +40,22 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case -16: {
-					System.out.println("Nhan thong bao khoi tao process");
-					String ImageName = dataInputStream.readUTF();
-					
-					ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
-					Process process = processBuilder.start();
-					
-					int exitProcess = process.exitValue();
-					System.out.println("Tien trinh ket thuc: " + exitProcess);
+					try {
+						System.out.println("Nhan thong bao khoi tao process");
+						String ImageName = dataInputStream.readUTF();
+						
+						ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
+						Process process = processBuilder.start();
+						
+						
+						
+						int exitProcess = process.exitValue();
+						System.out.println("Tien trinh ket thuc: " + exitProcess);
+						
+					} catch (Exception e) {
+						dataOutputStream.writeInt(Commands.ERROR_START_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF(e.getMessage());
+					}
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );
