@@ -89,12 +89,12 @@ public class RemoteForm extends JFrame {
 		JButton btnScreenShot = new JButton("Screen Shot");
 		btnScreenShot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					dataOutputStream.writeInt(Commands.REQUEST_SCREEN_SHOT.getAbbrev());
-					
-				} catch(Exception err) {
-					err.printStackTrace();
-				}
+//				try {
+//					dataOutputStream.writeInt(Commands.REQUEST_SCREEN_SHOT.getAbbrev());
+//					
+//				} catch(Exception err) {
+//					err.printStackTrace();
+//				}
 			}
 		});
 		btnScreenShot.setBounds(33, 124, 135, 23);

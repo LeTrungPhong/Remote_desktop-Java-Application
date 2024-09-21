@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
+
 import General.ProcessWindow;
 
 public class CentralReader implements Runnable {
@@ -60,6 +62,10 @@ public class CentralReader implements Runnable {
 					processManagementForm.setListProcess(list);
 			
 					break;
+				}
+				case -18: {
+					String msg = dataInputStream.readUTF();
+					JOptionPane.showMessageDialog(processManagementForm, msg, "Thông báo", JOptionPane.WARNING_MESSAGE);
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);

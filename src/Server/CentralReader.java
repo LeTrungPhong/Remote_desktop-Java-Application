@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+import General.Commands;
 
 public class CentralReader implements Runnable {
 	
@@ -46,14 +47,23 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case -16: {
-					System.out.println("Nhan thong bao khoi tao process");
-					String ImageName = dataInputStream.readUTF();
 					
-					ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
-					Process process = processBuilder.start();
-					
-					int exitProcess = process.exitValue();
-					System.out.println("Tien trinh ket thuc: " + exitProcess);
+					try {
+						System.out.println("Nhan thong bao khoi tao process");
+						String ImageName = dataInputStream.readUTF();
+						
+						ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
+						Process process = processBuilder.start();
+						
+						
+						
+						int exitProcess = process.exitValue();
+						System.out.println("Tien trinh ket thuc: " + exitProcess);
+						
+					} catch (Exception e) {
+						dataOutputStream.writeInt(Commands.ERROR_START_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF(e.getMessage());
+					}
 					break;
 				}
 				case -18: {
