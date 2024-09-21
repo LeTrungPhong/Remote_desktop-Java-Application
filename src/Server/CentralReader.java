@@ -48,37 +48,55 @@ public class CentralReader implements Runnable {
 				}
 				case -16: {
 					
+					System.out.println("Nhan thong bao khoi tao process");
+					String ImageName = dataInputStream.readUTF();
+					
+					ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
 					try {
-						System.out.println("Nhan thong bao khoi tao process");
-						String ImageName = dataInputStream.readUTF();
-						
-						ProcessBuilder processBuilder = new ProcessBuilder(ImageName);
 						Process process = processBuilder.start();
 						
 						
 						
-						int exitProcess = process.exitValue();
-						System.out.println("Tien trinh ket thuc: " + exitProcess);
+//						int exitProcess = process.exitValue();
+//						System.out.println("Tien trinh ket thuc: " + exitProcess);
 						
 					} catch (Exception e) {
-						dataOutputStream.writeInt(Commands.ERROR_START_PROCESS.getAbbrev());
-						dataOutputStream.writeUTF(e.getMessage());
+						dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF("Không thể khởi tạo chương trình:" + ImageName);
 					}
 					break;
 				}
-				case -18: {
-					Robot robot = new Robot();
-					System.out.println("Nhan yeu chup man hinh");
-					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-					Rectangle screenRect = new Rectangle(screenSize);
-					BufferedImage screenCapture = robot.createScreenCapture(screenRect);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					ImageIO.write(screenCapture, "jpg", baos);
-//					dataOutputStream.write(imageBytes);
-					dataOutputStream.write(baos.toByteArray());
-					dataOutputStream.flush();
-					System.out.println("");
-					break;
+//				case -18: {
+//					Robot robot = new Robot();
+//					System.out.println("Nhan yeu chup man hinh");
+//					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//					Rectangle screenRect = new Rectangle(screenSize);
+//					BufferedImage screenCapture = robot.createScreenCapture(screenRect);
+//					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//					ImageIO.write(screenCapture, "jpg", baos);
+////					dataOutputStream.write(imageBytes);
+//					dataOutputStream.write(baos.toByteArray());
+//					dataOutputStream.flush();
+//					System.out.println("");
+//					break;
+//				}
+				case -19: {
+					System.out.println("Nhan thong bao tat process");
+					String pid = dataInputStream.readUTF();
+					try {
+			            String os = System.getProperty("os.name").toLowerCase();
+			            String command;
+			            if (os.contains("win")) {
+			                command = "taskkill /PID " + pid;
+			            } else {
+			                command = "kill -9 " + pid;
+			            }
+			            Runtime.getRuntime().exec(command);
+			            System.out.println("Process " + pid + " terminated.");
+			        } catch (IOException e) {
+			        	dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF("Không tìm thấy:" + pid);
+			        }
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );

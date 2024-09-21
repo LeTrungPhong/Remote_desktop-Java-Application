@@ -116,6 +116,13 @@ public class ProcessManagementForm extends JFrame {
 				if(textFieldProcess.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(ProcessManagementForm.this, "Khong duoc bo trong", "Thong bao", JOptionPane.WARNING_MESSAGE);
 				}
+				try {
+					dataOutputStream.writeInt(Commands.REQUEST_STOP_PROCESS.getAbbrev());
+					dataOutputStream.writeUTF(textFieldProcess.getText());
+					
+				} catch (IOException err) {
+					err.printStackTrace();
+				}
 			}
 		});
 		btnStop.setBounds(10, 227, 109, 23);
