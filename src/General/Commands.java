@@ -18,8 +18,9 @@ public enum Commands {
 	RESPONSE_PROCESS(-15),
 	REQUEST_START_PROCESS(-16),
 	ERROR_PROCESS(-18),	
-	REQUEST_STOP_PROCESS(-19);
-
+	REQUEST_STOP_PROCESS(-19),
+	REQUEST_SCREEN_SHOT(-20),
+	RESPONSE_SCREEN_SHOT(-21);
 	private int abbrev;
 
 	Commands(int abbrev){

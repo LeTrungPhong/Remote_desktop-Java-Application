@@ -12,6 +12,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import General.Commands;
@@ -68,20 +69,6 @@ public class CentralReader implements Runnable {
 					}
 					break;
 				}
-//				case -18: {
-//					Robot robot = new Robot();
-//					System.out.println("Nhan yeu chup man hinh");
-//					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//					Rectangle screenRect = new Rectangle(screenSize);
-//					BufferedImage screenCapture = robot.createScreenCapture(screenRect);
-//					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//					ImageIO.write(screenCapture, "jpg", baos);
-////					dataOutputStream.write(imageBytes);
-//					dataOutputStream.write(baos.toByteArray());
-//					dataOutputStream.flush();
-//					System.out.println("");
-//					break;
-//				}
 				case -19: {
 					System.out.println("Nhan thong bao tat process");
 					String pid = dataInputStream.readUTF();
@@ -104,6 +91,24 @@ public class CentralReader implements Runnable {
 //		                dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
 //		                dataOutputStream.writeUTF("Không thể tắt process với PID: " + pid);
 //		            } 
+				}
+				case -20: {
+					Robot robot = new Robot();
+					System.out.println("Nhan yeu chup man hinh");
+					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+					Rectangle screenRect = new Rectangle(screenSize);
+					BufferedImage screenCapture = robot.createScreenCapture(screenRect);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(screenCapture, "jpg", baos);
+					
+					byte[] imageBytes = ByteBuffer.allocate(4).putInt(baos.size()).array();
+					
+					dataOutputStream.writeInt(Commands.RESPONSE_SCREEN_SHOT.getAbbrev());
+					dataOutputStream.write(imageBytes);
+					dataOutputStream.write(baos.toByteArray());
+					dataOutputStream.flush();
+					System.out.println("");
+					break;
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );

@@ -1,11 +1,18 @@
 package Client;
 
+import java.awt.FileDialog;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import General.ProcessWindow;
@@ -60,12 +67,57 @@ public class CentralReader implements Runnable {
 //					}
 					
 					processManagementForm.setListProcess(list);
-			
 					break;
 				}
 				case -18: {
 					String msg = dataInputStream.readUTF();
 					JOptionPane.showMessageDialog(processManagementForm, msg, "Thông báo", JOptionPane.WARNING_MESSAGE);
+					break;
+				}
+				case -21: {
+					// Đọc kích thước của ảnh trước
+					byte[] sizeAr = new byte[4];
+					
+					dataInputStream.readFully(sizeAr);
+					// datadataInputStream
+
+					int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+
+					// Nhận dữ liệu ảnh
+					byte[] imageBytes = new byte[size];
+					dataInputStream.readFully(imageBytes);
+					// // datadataInputStream
+
+					// Chuyển đổi lại thành BufferedImage
+					BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+					
+					
+					// Tạo FileDialog để mở giao diện lưu file của hệ điều hành
+			        FileDialog fileDialog = new FileDialog(remoteForm, "Chọn nơi lưu ảnh", FileDialog.SAVE);
+
+			        // Hiển thị FileDialog
+			        fileDialog.setVisible(true);
+
+			        // Kiểm tra xem người dùng có chọn file không
+			        String directory = fileDialog.getDirectory();
+			        String fileName = fileDialog.getFile();
+
+			        if (directory != null && fileName != null) {
+			            // Tạo đối tượng file từ đường dẫn và tên file mà người dùng chọn
+			            File fileToSave = new File(directory, fileName + ".png");
+
+			            try {
+			                // Ghi ảnh dưới định dạng PNG
+			                ImageIO.write(receivedImage, "png", fileToSave);
+			                JOptionPane.showMessageDialog(null, "Ảnh đã được lưu thành công!");
+			            } catch (IOException e) {
+			                e.printStackTrace();
+			                JOptionPane.showMessageDialog(null, "Lỗi khi lưu ảnh!", "Error", JOptionPane.ERROR_MESSAGE);
+			            }
+			        } else {
+			            System.out.println("Người dùng đã hủy thao tác lưu.");
+			        }
+					
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);

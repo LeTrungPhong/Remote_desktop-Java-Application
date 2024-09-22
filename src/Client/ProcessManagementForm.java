@@ -24,6 +24,9 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.TitledBorder;
 
 public class ProcessManagementForm extends JFrame {
 
@@ -62,7 +65,7 @@ public class ProcessManagementForm extends JFrame {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setBounds(100, 100, 355, 300);
+		setBounds(100, 100, 418, 371);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -71,7 +74,8 @@ public class ProcessManagementForm extends JFrame {
 		
 		tableListProcess = new JTable();
 		JScrollPane scrollPane = new JScrollPane(tableListProcess); // Thêm JScrollPane
-	    scrollPane.setBounds(0, 0, 339, 155);
+		scrollPane.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+	    scrollPane.setBounds(10, 11, 382, 206);
 	    contentPane.add(scrollPane); // Thêm JScrollPane vào panel
 //		tableListProcess.setBounds(0, 0, 339, 155);
 //		contentPane.add(tableListProcess);
@@ -87,7 +91,7 @@ public class ProcessManagementForm extends JFrame {
 				}
 			}
 		});
-		btnGetListProcess.setBounds(10, 166, 148, 23);
+		btnGetListProcess.setBounds(10, 230, 148, 23);
 		contentPane.add(btnGetListProcess);
 		
 		JButton btnStart = new JButton("Start");
@@ -99,6 +103,7 @@ public class ProcessManagementForm extends JFrame {
 					try {
 						dataOutputStream.writeInt(Commands.REQUEST_START_PROCESS.getAbbrev());
 						dataOutputStream.writeUTF(textFieldProcess.getText().trim());
+						dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
 						dataOutputStream.flush();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -107,7 +112,7 @@ public class ProcessManagementForm extends JFrame {
 				}
 			}
 		});
-		btnStart.setBounds(10, 200, 109, 23);
+		btnStart.setBounds(10, 264, 109, 23);
 		contentPane.add(btnStart);
 		
 		JButton btnStop = new JButton("Stop");
@@ -119,17 +124,18 @@ public class ProcessManagementForm extends JFrame {
 				try {
 					dataOutputStream.writeInt(Commands.REQUEST_STOP_PROCESS.getAbbrev());
 					dataOutputStream.writeUTF(textFieldProcess.getText());
-					
+					dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
+					dataOutputStream.flush();
 				} catch (IOException err) {
 					err.printStackTrace();
 				}
 			}
 		});
-		btnStop.setBounds(10, 227, 109, 23);
+		btnStop.setBounds(10, 298, 109, 23);
 		contentPane.add(btnStop);
 		
 		textFieldProcess = new JTextField();
-		textFieldProcess.setBounds(141, 213, 86, 20);
+		textFieldProcess.setBounds(142, 280, 86, 20);
 		contentPane.add(textFieldProcess);
 		textFieldProcess.setColumns(10);
 		

@@ -3,14 +3,18 @@ package General;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-public class test {
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
+public class test extends JFrame {
 	
 	public test() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		System.out.println("height: " + screenSize.height + ", width : " + screenSize.width);
+		
 	}
 	
 	public static void main(String[] args) {
-		new test();
+		 
+		 JFileChooser fileChooser = new JFileChooser();
+	     fileChooser.setDialogTitle("Chọn nơi lưu ảnh");
 	}
 }
