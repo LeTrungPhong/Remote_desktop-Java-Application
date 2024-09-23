@@ -1,5 +1,6 @@
 package Client;
 
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.io.DataInputStream;
@@ -23,20 +24,26 @@ import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ActionEvent;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.border.MatteBorder;
 
 public class ProcessManagementForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable tableListProcess;
-	private JTextField textFieldProcess;
+	private JTextField textFieldProcessImageName;
 	private Socket socket = null;
 	private DataInputStream dataInputStream = null;
 	private DataOutputStream dataOutputStream = null;
+	private JTextField textFieldProcessPID;
 
 	/**
 	 * Launch the application.
@@ -73,8 +80,30 @@ public class ProcessManagementForm extends JFrame {
 		contentPane.setLayout(null);
 		
 		tableListProcess = new JTable();
-		JScrollPane scrollPane = new JScrollPane(tableListProcess); // Thêm JScrollPane
-		scrollPane.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		tableListProcess.setBackground(new Color(248,248,248));
+		
+		tableListProcess.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+                if (!e.getValueIsAdjusting()) {
+                    // Lấy chỉ số của hàng được chọn
+                    int selectedRow = tableListProcess.getSelectedRow();
+                    if (selectedRow != -1) { // Kiểm tra nếu hàng hợp lệ
+                        // Lấy dữ liệu từ hàng được chọn
+                        String ImageName = tableListProcess.getValueAt(selectedRow, 0).toString();
+                        String PID = tableListProcess.getValueAt(selectedRow, 1).toString();
+                        textFieldProcessImageName.setText(ImageName);
+                        textFieldProcessImageName.setForeground(Color.BLACK);
+                        textFieldProcessPID.setText(PID);
+                        textFieldProcessPID.setForeground(Color.BLACK);
+                    }
+                }
+			}
+		});
+		
+		JScrollPane scrollPane = new JScrollPane(tableListProcess);
 	    scrollPane.setBounds(10, 11, 382, 206);
 	    contentPane.add(scrollPane); // Thêm JScrollPane vào panel
 //		tableListProcess.setBounds(0, 0, 339, 155);
@@ -97,13 +126,12 @@ public class ProcessManagementForm extends JFrame {
 		JButton btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(textFieldProcess.getText().isEmpty()) {
+				if(textFieldProcessImageName.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(ProcessManagementForm.this, "Khong duoc bo trong", "Thong bao", JOptionPane.WARNING_MESSAGE);
 				} else {
 					try {
 						dataOutputStream.writeInt(Commands.REQUEST_START_PROCESS.getAbbrev());
-						dataOutputStream.writeUTF(textFieldProcess.getText().trim());
-						dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
+						dataOutputStream.writeUTF(textFieldProcessImageName.getText().trim());
 						dataOutputStream.flush();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -118,13 +146,12 @@ public class ProcessManagementForm extends JFrame {
 		JButton btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(textFieldProcess.getText().isEmpty()) {
+				if(textFieldProcessPID.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(ProcessManagementForm.this, "Khong duoc bo trong", "Thong bao", JOptionPane.WARNING_MESSAGE);
 				}
 				try {
 					dataOutputStream.writeInt(Commands.REQUEST_STOP_PROCESS.getAbbrev());
-					dataOutputStream.writeUTF(textFieldProcess.getText());
-					dataOutputStream.writeInt(Commands.REQUEST_PROCESS.getAbbrev());
+					dataOutputStream.writeUTF(textFieldProcessPID.getText());
 					dataOutputStream.flush();
 				} catch (IOException err) {
 					err.printStackTrace();
@@ -134,10 +161,60 @@ public class ProcessManagementForm extends JFrame {
 		btnStop.setBounds(10, 298, 109, 23);
 		contentPane.add(btnStop);
 		
-		textFieldProcess = new JTextField();
-		textFieldProcess.setBounds(142, 280, 86, 20);
-		contentPane.add(textFieldProcess);
-		textFieldProcess.setColumns(10);
+		textFieldProcessImageName = new JTextField("Enter ImageName ...");
+		textFieldProcessImageName.setForeground(Color.GRAY);
+		textFieldProcessImageName.setBounds(129, 264, 136, 20);
+		textFieldProcessImageName.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if(textFieldProcessImageName.getText().equals("Enter ImageName ...")) {
+					textFieldProcessImageName.setText("");
+					textFieldProcessImageName.setForeground(Color.BLACK);
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if(textFieldProcessImageName.getText().isEmpty()) {
+					textFieldProcessImageName.setText("Enter ImageName ...");
+					textFieldProcessImageName.setForeground(Color.GRAY);
+				}
+			}
+			
+		});
+		contentPane.add(textFieldProcessImageName);
+		textFieldProcessImageName.setColumns(10);
+		
+		textFieldProcessPID = new JTextField("Enter PID ...");
+		textFieldProcessPID.setForeground(Color.GRAY);
+		textFieldProcessPID.setBounds(129, 299, 136, 20);
+		
+		textFieldProcessPID.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if(textFieldProcessPID.getText().isEmpty()) {
+					textFieldProcessPID.setText("Enter PID ...");
+					textFieldProcessPID.setForeground(Color.GRAY);
+				}
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if(textFieldProcessPID.getText().equals("Enter PID ...")) {
+					textFieldProcessPID.setText("");
+					textFieldProcessPID.setForeground(Color.BLACK);
+				}
+			}
+		});
+		
+		contentPane.add(textFieldProcessPID);
+		textFieldProcessPID.setColumns(10);
 		
 		
 	}

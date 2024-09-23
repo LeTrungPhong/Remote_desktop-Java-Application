@@ -58,11 +58,10 @@ public class CentralReader implements Runnable {
 					try {
 						Process process = processBuilder.start();
 						
-						
-						
 //						int exitProcess = process.exitValue();
 //						System.out.println("Tien trinh ket thuc: " + exitProcess);
-						
+						Thread.sleep(1000);
+						sendProcess.sendProcess();
 					} catch (Exception e) {
 						dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
 						dataOutputStream.writeUTF("Không thể khởi tạo chương trình:" + ImageName);
@@ -86,11 +85,13 @@ public class CentralReader implements Runnable {
 		                command = "kill -9 " + pid;
 		            }
 		            Runtime.getRuntime().exec(command);
-		            
+		            Thread.sleep(1000);
+		            sendProcess.sendProcess();
 //		            if (this.checkRunningProcess(pid)) {
 //		                dataOutputStream.writeInt(Commands.ERROR_PROCESS.getAbbrev());
 //		                dataOutputStream.writeUTF("Không thể tắt process với PID: " + pid);
 //		            } 
+		            break;
 				}
 				case -20: {
 					Robot robot = new Robot();

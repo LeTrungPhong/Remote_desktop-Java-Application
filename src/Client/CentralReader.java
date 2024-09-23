@@ -121,7 +121,7 @@ public class CentralReader implements Runnable {
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);
-					System.out.println("Not data");
+//					System.out.println("Not data");
 					break;
 				}
 			} catch (Exception e) {
