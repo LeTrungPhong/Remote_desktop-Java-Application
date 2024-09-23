@@ -45,36 +45,38 @@ public class Server {
 				socketClient = serverSocket.accept();
 				System.out.println("Client connected");
 				
-				dataInputStream = new DataInputStream(socketClient.getInputStream());
-				dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
+				new Thread(new ClientHandler(socketClient, password)).start();
 				
-				while(true) {
-					if(dataInputStream.readInt() == Commands.REQUEST_CONNECT.getAbbrev()) {
-						String passwordClient = dataInputStream.readUTF();
-						System.out.println(passwordClient + " " + this.password);
-						if(passwordClient.equals(this.password)) {
-							System.out.println("Mat khau hop le");
-							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
-							dataOutputStream.writeBoolean(true);
-							checkConnect = true;
-						} else {
-							System.out.println("Mat khau khong hop le");
-							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
-							dataOutputStream.writeBoolean(false);
-						}
-						break;
-					}
-				}
-				if(checkConnect) {
-					break;
-				}
+//				dataInputStream = new DataInputStream(socketClient.getInputStream());
+//				dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
+				
+//				while(true) {
+//					if(dataInputStream.readInt() == Commands.REQUEST_CONNECT.getAbbrev()) {
+//						String passwordClient = dataInputStream.readUTF();
+//						System.out.println(passwordClient + " " + this.password);
+//						if(passwordClient.equals(this.password)) {
+//							System.out.println("Mat khau hop le");
+//							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
+//							dataOutputStream.writeBoolean(true);
+//							checkConnect = true;
+//						} else {
+//							System.out.println("Mat khau khong hop le");
+//							dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
+//							dataOutputStream.writeBoolean(false);
+//						}
+//						break;
+//					}
+//				}
+//				if(checkConnect) {
+//					break;
+//				}
 			}
-			
-			new Thread(new SendScreen(socketClient)).start();
-
+//			
+//			new Thread(new SendScreen(socketClient)).start();
+//
 //			new Thread(new ReceiveEvents(socketClient)).start();
-			
-			new Thread(new CentralReader(socketClient)).start();
+//			
+//			new Thread(new CentralReader(socketClient)).start();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
