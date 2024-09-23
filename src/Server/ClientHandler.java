@@ -37,8 +37,8 @@ public class ClientHandler implements Runnable {
                         dataOutputStream.writeInt(Commands.RESPONSE_CONNECT.getAbbrev());
                         dataOutputStream.writeBoolean(false);
                         clientSocket.close();
-                        break;
                     }
+                    break;
                 }
             }
 

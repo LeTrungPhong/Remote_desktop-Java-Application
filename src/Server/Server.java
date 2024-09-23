@@ -14,7 +14,6 @@ public class Server {
 //	private JLabel jLabelScreen;
 //	private JButton jbutton;
 	private ServerSocket serverSocket = null;
-	private Socket socketClient = null;
 	private DataInputStream dataInputStream = null;
 	private DataOutputStream dataOutputStream = null;
 	private volatile String password;
@@ -42,14 +41,14 @@ public class Server {
 			System.out.println("Server is running...");
 			
 			while(true) {
-				socketClient = serverSocket.accept();
+				Socket socketClient = serverSocket.accept();
 				System.out.println("Client connected");
 				
 				new Thread(new ClientHandler(socketClient, password)).start();
 				
 //				dataInputStream = new DataInputStream(socketClient.getInputStream());
 //				dataOutputStream = new DataOutputStream(socketClient.getOutputStream());
-				
+//				
 //				while(true) {
 //					if(dataInputStream.readInt() == Commands.REQUEST_CONNECT.getAbbrev()) {
 //						String passwordClient = dataInputStream.readUTF();
@@ -71,11 +70,11 @@ public class Server {
 //					break;
 //				}
 			}
-//			
+			
 //			new Thread(new SendScreen(socketClient)).start();
-//
+
 //			new Thread(new ReceiveEvents(socketClient)).start();
-//			
+			
 //			new Thread(new CentralReader(socketClient)).start();
 			
 		} catch (IOException e) {
