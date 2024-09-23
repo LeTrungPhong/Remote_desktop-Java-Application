@@ -20,34 +20,26 @@ public class RemoteForm extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private Socket socket = null;
+	private Client client = null;
 	private DataOutputStream dataOutputStream = null;
 	private ProcessManagementForm processManagementForm = null;
+	private KeyloggerForm keyloggerForm = null;
 
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					RemoteForm frame = new RemoteForm();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the frame.
 	 * 
 	 * @throws IOException
 	 */
-	public RemoteForm(Socket socket, ProcessManagementForm processManagementForm) throws IOException {
+	public RemoteForm(Socket socket, Client client) throws IOException {
 		this.setSocket(socket);
+		this.setClient(client);
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
-		this.processManagementForm = processManagementForm;
+		processManagementForm = client.getProcessManagementForm();
+		keyloggerForm = client.getKeyloggerForm();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -61,17 +53,7 @@ public class RemoteForm extends JFrame {
 		JButton btnProcessManagement = new JButton("Process Management");
 		btnProcessManagement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							processManagementForm.setVisible(true);
-//							dataOutputStream.writeInt(Commands.OPEN_FORM_PROCESS_MANAGEMENT.getAbbrev());
-//							dataOutputStream.flush();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				processManagementForm.setVisible(true);
 			}
 		});
 		btnProcessManagement.setBounds(33, 57, 135, 23);
@@ -103,7 +85,7 @@ public class RemoteForm extends JFrame {
 		JButton btnKeylogger = new JButton("Keylogger");
 		btnKeylogger.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				keyloggerForm.setVisible(true);
 			}
 		});
 		btnKeylogger.setBounds(33, 158, 135, 23);
@@ -125,5 +107,13 @@ public class RemoteForm extends JFrame {
 
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 }

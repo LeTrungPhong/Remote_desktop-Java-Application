@@ -52,6 +52,12 @@ public class ReceiveEvents {
 				}
 				break;
 			}
+			case -50: {
+				int notches = dataInputStream.readInt();
+//				robot.mouseWheel(notches);
+				System.out.println("MouseWheel: " + notches);
+				break;
+			}
 			default:
 //				throw new IllegalArgumentException("Unexpected value: ");
 				break;

@@ -7,6 +7,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -15,52 +17,39 @@ import javax.swing.JFrame;
 
 import General.Commands;
 
-public class SendEvents implements MouseListener, MouseMotionListener, KeyListener{
+public class SendEvents implements MouseListener, MouseMotionListener, KeyListener, MouseWheelListener {
 
 	private Socket socket = null;
 	private JFrame jFrame = null;
-	private DataOutputStream out = null;
+	private DataOutputStream dataOutputStream = null;
 	private float scale;
-	
+
 	public SendEvents(Socket socket, JFrame jFrame, float scale) throws IOException {
 		this.setSocket(socket);
 		this.setjFrame(jFrame);
 		this.setScale(scale);
-		out = new DataOutputStream(socket.getOutputStream());
-		
+		dataOutputStream = new DataOutputStream(socket.getOutputStream());
+
 		jFrame.addKeyListener(this);
 		jFrame.addMouseListener(this);
 		jFrame.addMouseMotionListener(this);
+		jFrame.addMouseWheelListener(this);
 	}
-	
+
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-//		System.out.println("Key Typed: " + e.getKeyChar());e
-//		keyTyped = e.getKeyChar();
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-//		System.out.println("KeyPressed :" + e.getKeyChar());
-//		if (!keyHeld) {
-//			keyCode = e.getKeyCode();
-//
-////			System.out.println("Phím đã được nhấn: " + e.getKeyChar());
-//			keyHeld = true; // Đánh dấu là phím đang được giữ
-//			keyHeldSendClient = true;
-//		}
-//		keyHeld = true;
-//		System.out.println("1");
-		
-//		if(!keyHeld) { keyHeld = true; }
-		
 		try {
-			out.writeInt(Commands.EVENTS.getAbbrev());
-			out.writeInt(Commands.PRESS_KEY.getAbbrev());
-			out.writeInt(e.getKeyCode());
-			out.flush();
+			dataOutputStream.writeInt(Commands.EVENTS.getAbbrev());
+			dataOutputStream.writeInt(Commands.PRESS_KEY.getAbbrev());
+			dataOutputStream.writeInt(e.getKeyCode());
+			dataOutputStream.flush();
 //			System.out.println("KeyPressed :" + e.getKeyCode());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -71,34 +60,25 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-//		System.out.println("KeyReleased :" + e.getKeyChar());
-//		if(e.getKeyChar() == keyTyped && keyHeld) {
-////			keyHeld = true;
-////			System.out.println("2");
-//			
-//		}
+
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-//		mouseX = e.getX();
-//		mouseY = e.getY();
-//        System.out.println("Mouse dragged to X: " + mouseX + ", Y: " + mouseY);
+
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-//		mouseX = e.getX();
-//		mouseY = e.getY();
 		try {
 			Insets insets = jFrame.getInsets();
-			out.writeInt(Commands.EVENTS.getAbbrev());
-			out.writeInt(Commands.MOVE_MOUSE.getAbbrev());
-			out.writeFloat((e.getX() - insets.left) / this.scale);
-			out.writeFloat((e.getY() - insets.top) / this.scale);
-			out.flush();
+			dataOutputStream.writeInt(Commands.EVENTS.getAbbrev());
+			dataOutputStream.writeInt(Commands.MOVE_MOUSE.getAbbrev());
+			dataOutputStream.writeFloat((e.getX() - insets.left) / this.scale);
+			dataOutputStream.writeFloat((e.getY() - insets.top) / this.scale);
+			dataOutputStream.flush();
 //			System.out.println("MouseMoved X: " + e.getX() / scale + ", Y: " + e.getY() / scale);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -110,29 +90,28 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-				try {
-					Point point = e.getPoint();
+		try {
+			Point point = e.getPoint();
 
-					if (e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
 //						System.out.println("You left click the mouse at " + point.x + " " + point.y);
 //						click = 1;
-						out.writeInt(Commands.EVENTS.getAbbrev());
-						out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
-						out.writeInt(MouseEvent.BUTTON1);
-						out.flush();
+				dataOutputStream.writeInt(Commands.EVENTS.getAbbrev());
+				dataOutputStream.writeInt(Commands.CLICK_MOUSE.getAbbrev());
+				dataOutputStream.writeInt(MouseEvent.BUTTON1);
+				dataOutputStream.flush();
 //						System.out.println("MouseClicked_BUTTON1");
-					} else if (e.getButton() == MouseEvent.BUTTON3) {
+			} else if (e.getButton() == MouseEvent.BUTTON3) {
 //						System.out.println("You right click the mouse at " + point.x + " " + point.y);
-//						click = 2;
-						out.writeInt(Commands.EVENTS.getAbbrev());
-						out.writeInt(Commands.CLICK_MOUSE.getAbbrev());
-						out.writeInt(MouseEvent.BUTTON3);
-						out.flush();
+				dataOutputStream.writeInt(Commands.EVENTS.getAbbrev());
+				dataOutputStream.writeInt(Commands.CLICK_MOUSE.getAbbrev());
+				dataOutputStream.writeInt(MouseEvent.BUTTON3);
+				dataOutputStream.flush();
 //						System.out.println("MouseClicked_BUTTON3");
-					}
-				} catch (Exception exception) {
-					exception.printStackTrace();
-				}
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 	}
 
 	@Override
@@ -179,6 +158,26 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 		}
 	}
 
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// TODO Auto-generated method stub
+
+		try {
+			int notches = e.getWheelRotation();
+			if (notches < 0) {
+//				System.out.println("Lăn chuột lên ...");
+			} else {
+//				System.out.println("lăn chuột xuống ...");
+			}
+			dataOutputStream.writeInt(Commands.EVENTS.getAbbrev());
+			dataOutputStream.writeInt(Commands.MOUSE_WHEEL.getAbbrev());
+			dataOutputStream.writeInt(notches);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
 	public Socket getSocket() {
 		return socket;
 	}
@@ -202,4 +201,5 @@ public class SendEvents implements MouseListener, MouseMotionListener, KeyListen
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+
 }
