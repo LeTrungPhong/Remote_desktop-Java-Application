@@ -24,6 +24,7 @@ public class RemoteForm extends JFrame {
 	private DataOutputStream dataOutputStream = null;
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
+	private AppManagementForm appManagementForm = null;
 
 	/**
 	 * Launch the application.
@@ -40,6 +41,7 @@ public class RemoteForm extends JFrame {
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		processManagementForm = client.getProcessManagementForm();
 		keyloggerForm = client.getKeyloggerForm();
+		appManagementForm = client.getAppManagementForm();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -62,7 +64,7 @@ public class RemoteForm extends JFrame {
 		JButton btnAppManagement = new JButton("App Management");
 		btnAppManagement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				appManagementForm.setVisible(true);
 			}
 		});
 		btnAppManagement.setBounds(33, 91, 135, 23);
@@ -115,5 +117,13 @@ public class RemoteForm extends JFrame {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public AppManagementForm getAppManagementForm() {
+		return appManagementForm;
+	}
+
+	public void setAppManagementForm(AppManagementForm appManagementForm) {
+		this.appManagementForm = appManagementForm;
 	}
 }

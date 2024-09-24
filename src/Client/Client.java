@@ -44,34 +44,7 @@ public class Client extends JFrame {
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
-
-	public JLabel getLabelScreen() {
-		return this.jLabelScreen;
-	}
-
-	public int getWidthScreenServer() {
-		return widthScreenServer;
-	}
-
-	public int getHeightScreenServer() {
-		return heightScreenServer;
-	}
-
-	public float getScale() {
-		return scale;
-	}
-	
-	public RemoteForm getRemoteForm() {
-		return remoteForm;
-	}
-	
-	public ProcessManagementForm getProcessManagementForm() {
-		return processManagementForm;
-	}
-	
-	public KeyloggerForm getKeyloggerForm() {
-		return keyloggerForm;
-	}
+	private AppManagementForm appManagementForm = null;
 
 	public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
 		BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
@@ -136,6 +109,7 @@ public class Client extends JFrame {
 			socket = new Socket(address, port);
 			processManagementForm = new ProcessManagementForm(socket);
 			keyloggerForm = new KeyloggerForm(socket);
+			appManagementForm = new AppManagementForm(socket);
 			System.out.println("Connected to server");
 
 			// sends output to the socket
@@ -214,6 +188,42 @@ public class Client extends JFrame {
 		}
 		
 		
+	}
+	
+	public JLabel getLabelScreen() {
+		return this.jLabelScreen;
+	}
+
+	public int getWidthScreenServer() {
+		return widthScreenServer;
+	}
+
+	public int getHeightScreenServer() {
+		return heightScreenServer;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+	
+	public RemoteForm getRemoteForm() {
+		return remoteForm;
+	}
+	
+	public ProcessManagementForm getProcessManagementForm() {
+		return processManagementForm;
+	}
+	
+	public KeyloggerForm getKeyloggerForm() {
+		return keyloggerForm;
+	}
+
+	public AppManagementForm getAppManagementForm() {
+		return appManagementForm;
+	}
+
+	public void setAppManagementForm(AppManagementForm appManagementForm) {
+		this.appManagementForm = appManagementForm;
 	}
 
 //	public static void main(String args[]) {

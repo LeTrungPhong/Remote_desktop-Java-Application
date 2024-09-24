@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import General.AppRunning;
 import General.ProcessWindow;
 
 public class CentralReader implements Runnable {
@@ -26,6 +27,7 @@ public class CentralReader implements Runnable {
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
+	private AppManagementForm appManagementForm = null;
 	
 	public CentralReader(Socket socket, Client client) throws IOException {
 		this.setClient(client);
@@ -33,6 +35,7 @@ public class CentralReader implements Runnable {
 		this.setRemoteForm(client.getRemoteForm());
 		this.setKeyloggerForm(client.getKeyloggerForm());
 		this.setProcessManagementForm(client.getProcessManagementForm());
+		this.setAppManagementForm(client.getAppManagementForm());
 		dataInputStream = new DataInputStream(socket.getInputStream());
 		receiveScreen = new ReceiveScreen(socket, client);
 	}
@@ -126,6 +129,25 @@ public class CentralReader implements Runnable {
 					keyloggerForm.listening(keyChar);
 					break;
 				}
+				case -25: {
+					System.out.println("Bat dau doc app running ...");
+					LinkedList<AppRunning> list = new LinkedList<AppRunning>();
+					
+					int size = dataInputStream.readInt();
+					
+					for(int i = 0; i < size; ++i) {
+						String Name = dataInputStream.readUTF();
+						int Id = dataInputStream.readInt();
+						list.add(new AppRunning(Name, Id));
+					}
+					
+//					for (AppRunning appRunning : list) {
+//						System.out.println(appRunning.toString());
+//					}
+					
+					appManagementForm.setListAppRunning(list);
+					break;
+				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);
 //					System.out.println("Not data");
@@ -175,6 +197,14 @@ public class CentralReader implements Runnable {
 	
 	public void setProcessManagementForm(ProcessManagementForm processManagementForm) {
 		this.processManagementForm = processManagementForm;
+	}
+
+	public AppManagementForm getAppManagementForm() {
+		return appManagementForm;
+	}
+
+	public void setAppManagementForm(AppManagementForm appManagementForm) {
+		this.appManagementForm = appManagementForm;
 	}
 
 }
