@@ -36,4 +36,13 @@ public enum Commands {
 	public int getAbbrev(){
 		return abbrev;
 	}
+	
+	public static Commands fromAbbrev(int abbrev) {
+        for (Commands command : Commands.values()) {
+            if (command.getAbbrev() == abbrev) {
+                return command;
+            }
+        }
+        return null;
+    }
 }

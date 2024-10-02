@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import Client.Client;
 import General.Port;
 
 import javax.swing.JLabel;
@@ -17,8 +16,10 @@ import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Random;
@@ -27,8 +28,12 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.JPasswordField;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
+
+import Client.View.ClientForm;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
@@ -86,8 +91,8 @@ public class MainForm extends JFrame {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(10, 11, 205, 27);
 //        Border padding = new EmptyBorder(10, 10, 0, 0); 
-        Border lineBorder = BorderFactory.createLineBorder(Color.GRAY, 1); 
-		lblNewLabel.setBorder(lineBorder); 
+		Border lineBorder = BorderFactory.createLineBorder(Color.GRAY, 1);
+		lblNewLabel.setBorder(lineBorder);
 		panel.add(lblNewLabel);
 
 		JTextArea txtrHayGuiId = new JTextArea();
@@ -96,7 +101,7 @@ public class MainForm extends JFrame {
 		txtrHayGuiId.setEditable(false);
 		txtrHayGuiId.setLineWrap(true);
 		txtrHayGuiId.setWrapStyleWord(true);
-		txtrHayGuiId.setFocusable(false);  
+		txtrHayGuiId.setFocusable(false);
 		txtrHayGuiId.setHighlighter(null);
 		txtrHayGuiId.setText(
 				"Hay gui ID va Mat Khau duoi day cho doi tac neu ban muon cho ho dieu khien may tinh cua minh");
@@ -123,12 +128,25 @@ public class MainForm extends JFrame {
 		textFieldMyID.setColumns(10);
 
 		textFieldMyPassWord = new JTextField();
+		textFieldMyPassWord.setBounds(83, 116, 109, 20);
+		panel.add(textFieldMyPassWord);
 		textFieldMyPassWord.setBackground(new Color(225, 225, 225));
 		textFieldMyPassWord.setEditable(false);
 		textFieldMyPassWord.setColumns(10);
-		textFieldMyPassWord.setBounds(83, 116, 132, 20);
-//		textFieldMyPassWord.setFocusable(false);
-		panel.add(textFieldMyPassWord);
+
+		JButton btnChangePassword = new JButton("");
+		btnChangePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setPassWord();
+			}
+		});
+		btnChangePassword.setBounds(195, 116, 20, 20);
+		panel.add(btnChangePassword);
+		ImageIcon icon = new ImageIcon("src/image/reloadIcon.png");
+		Image scaledImage = icon.getImage().getScaledInstance(btnChangePassword.getWidth(), btnChangePassword.getHeight(),
+				Image.SCALE_SMOOTH);
+		ImageIcon scaledIcon = new ImageIcon(scaledImage);
+		btnChangePassword.setIcon(scaledIcon);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -174,7 +192,7 @@ public class MainForm extends JFrame {
 		passwordFieldPartnerPassWord = new JPasswordField();
 		passwordFieldPartnerPassWord.setBounds(79, 116, 136, 20);
 		panel_1.add(passwordFieldPartnerPassWord);
-		
+
 		setIPaddress();
 		setPassWord();
 
@@ -186,18 +204,24 @@ public class MainForm extends JFrame {
 				String passwordPartner = new String(passwordFieldPartnerPassWord.getPassword());
 				System.out.println("IP Partner: " + IPPartner);
 				System.out.println("Password Partner: " + passwordPartner);
-				if(IPPartner.isEmpty() || passwordPartner.isEmpty()) {
-					JOptionPane.showMessageDialog(MainForm.this, "Khong duoc bo trong IP hoac password", "Thong bao", JOptionPane.INFORMATION_MESSAGE);
+				if (IPPartner.isEmpty() || passwordPartner.isEmpty()) {
+					JOptionPane.showMessageDialog(MainForm.this, "Khong duoc bo trong IP hoac password", "Thong bao",
+							JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					new Client("localhost", Port.port, passwordPartner);
+					try {
+						new ClientForm(textFieldPartnerID.getText(), Port.port, passwordPartner);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
 		btnStartRemote.setBounds(293, 169, 156, 23);
 		contentPane.add(btnStartRemote);
-		
+
 		setVisible(true);
-		
+
 		new Thread(new runThreadServer(passWord)).start();
 	}
 
@@ -214,30 +238,30 @@ public class MainForm extends JFrame {
 			MACaddress = stringBuilder.toString();
 			System.out.println(stringBuilder.toString());
 			textFieldMyID.setText(stringBuilder.toString());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public void setIPaddress() {
 		try {
-			 InetAddress IP = InetAddress.getLocalHost();
-		     System.out.println("IP of my system is := "+IP.getHostAddress());
-		     IPaddress = IP.getHostAddress();
+			InetAddress IP = InetAddress.getLocalHost();
+			System.out.println("IP of my system is := " + IP.getHostAddress());
+			IPaddress = IP.getHostAddress();
 //		     Port.ipAddress = IP.getHostAddress();
-		     textFieldMyID.setText(IP.getHostAddress());
-		} catch(Exception e) {
+			textFieldMyID.setText(IP.getHostAddress());
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public void setPassWord() {
 		Random random = new Random();
-        int min = 10000;
-        int max = 99999;
-        int randomNumber = random.nextInt(max - min + 1) + min;
-        System.out.println("Random number between " + min + " and " + max + ": " + randomNumber);
-        this.passWord = Integer.toString(randomNumber);
-        textFieldMyPassWord.setText(Integer.toString(randomNumber));
+		int min = 10000;
+		int max = 99999;
+		int randomNumber = random.nextInt(max - min + 1) + min;
+		System.out.println("Random number between " + min + " and " + max + ": " + randomNumber);
+		this.passWord = Integer.toString(randomNumber);
+		textFieldMyPassWord.setText(Integer.toString(randomNumber));
 	}
 }

