@@ -39,6 +39,8 @@ public class SendScreen implements Runnable {
 			// gui kich thuoc man hinh server
 			dataOutputStream.writeInt(screenSize.width);
 			dataOutputStream.writeInt(screenSize.height);
+			
+			socket.setTcpNoDelay(true);
 
 			while (true) {
 				// chup man hinh
@@ -67,8 +69,6 @@ public class SendScreen implements Runnable {
 				// (một luồng đầu ra trong bộ nhớ).
 
 				byte[] imageBytes = ByteBuffer.allocate(4).putInt(baos.size()).array();
-
-				
 
 				dataOutputStream.writeInt(Commands.SCREEN.getAbbrev());
 				dataOutputStream.writeInt(Commands.INFOR_SCREEN.getAbbrev());

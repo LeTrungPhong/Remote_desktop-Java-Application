@@ -4,10 +4,11 @@ import Server.Server;
 
 public class runThreadServer implements Runnable {
 	
-	private String password;
-	private Server server = null;
+	private volatile String password;
+	private Server server;
 	
-	public runThreadServer(String password) {
+	public runThreadServer(Server server, String password) {
+		this.server = server;
 		this.password = password;
 	}
 
@@ -16,5 +17,4 @@ public class runThreadServer implements Runnable {
 		// TODO Auto-generated method stub
 		server = new Server(password);
 	}
-
 }

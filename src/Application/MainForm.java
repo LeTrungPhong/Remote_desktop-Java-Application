@@ -1,6 +1,5 @@
 package Application;
 
-import Server.Server;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -9,6 +8,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import General.Port;
+import Server.Server;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,14 +30,10 @@ import javax.swing.JPasswordField;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.border.TitledBorder;
 
 import Client.View.ClientForm;
 
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.MatteBorder;
 
 public class MainForm extends JFrame {
 
@@ -50,6 +46,7 @@ public class MainForm extends JFrame {
 	private volatile String MACaddress;
 	private volatile String passWord;
 	private volatile String IPaddress;
+	private Server server = null;
 
 	/**
 	 * Launch the application.
@@ -102,7 +99,7 @@ public class MainForm extends JFrame {
 		txtrHayGuiId.setLineWrap(true);
 		txtrHayGuiId.setWrapStyleWord(true);
 		txtrHayGuiId.setFocusable(false);
-		txtrHayGuiId.setHighlighter(null);
+		txtrHayGuiId.setHighlighter(null); 
 		txtrHayGuiId.setText(
 				"Hay gui ID va Mat Khau duoi day cho doi tac neu ban muon cho ho dieu khien may tinh cua minh");
 		txtrHayGuiId.setBounds(10, 49, 205, 28);
@@ -133,13 +130,22 @@ public class MainForm extends JFrame {
 		textFieldMyPassWord.setBackground(new Color(225, 225, 225));
 		textFieldMyPassWord.setEditable(false);
 		textFieldMyPassWord.setColumns(10);
+		
+		setIPaddress();
+		setPassWord();
 
 		JButton btnChangePassword = new JButton("");
 		btnChangePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setPassWord();
+				if (server != null) {
+		            setPassWordServer();
+		        } else {
+		            JOptionPane.showMessageDialog(MainForm.this, "Server chưa được khởi tạo!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		        }
 			}
 		});
+		
 		btnChangePassword.setBounds(195, 116, 20, 20);
 		panel.add(btnChangePassword);
 		ImageIcon icon = new ImageIcon("src/image/reloadIcon.png");
@@ -193,9 +199,6 @@ public class MainForm extends JFrame {
 		passwordFieldPartnerPassWord.setBounds(79, 116, 136, 20);
 		panel_1.add(passwordFieldPartnerPassWord);
 
-		setIPaddress();
-		setPassWord();
-
 		JButton btnStartRemote = new JButton("Bat dau dieu khien");
 		btnStartRemote.setBackground(new Color(245, 245, 245));
 		btnStartRemote.addActionListener(new ActionListener() {
@@ -221,8 +224,16 @@ public class MainForm extends JFrame {
 		contentPane.add(btnStartRemote);
 
 		setVisible(true);
-
-		new Thread(new runThreadServer(passWord)).start();
+		
+//		new Thread(new runThreadServer(this.server,this.passWord)).start();
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MainForm.this.server = new Server(passWord);
+				System.out.println("Khoi tao server thanh cong ...");
+			}
+		}).start();
 	}
 
 	public void setMACaddress() {
@@ -263,5 +274,9 @@ public class MainForm extends JFrame {
 		System.out.println("Random number between " + min + " and " + max + ": " + randomNumber);
 		this.passWord = Integer.toString(randomNumber);
 		textFieldMyPassWord.setText(Integer.toString(randomNumber));
+	}
+	
+	public void setPassWordServer() {
+		this.server.setPassword(this.passWord);
 	}
 }
