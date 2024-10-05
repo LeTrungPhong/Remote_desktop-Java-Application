@@ -64,24 +64,18 @@ public class ClientFormBLL {
 			widthScreenServer = dataInputStream.readInt();
 			heightScreenServer = dataInputStream.readInt();
 
-			try {
-				Robot robot = new Robot();
-				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-				double widthClient = screenSize.getWidth();
-				double heigthClient = screenSize.getHeight();
-
-				while (true) {
-					if (widthClient > widthScreenServer && heigthClient > heightScreenServer)
-						break;
-					widthScreenServer = widthScreenServer * 2 / 5;
-					heightScreenServer = heightScreenServer * 2 / 5;
-					scale = scale * 2 / 5;
-				}
-
-			} catch (AWTException err) {
-				err.printStackTrace();
-			}
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//
+//			double widthClient = screenSize.getWidth();
+//			double heigthClient = screenSize.getHeight();
+//
+//			while (true) {
+//				if (widthClient > widthScreenServer && heigthClient > heightScreenServer)
+//					break;
+//				widthScreenServer = widthScreenServer * 2 / 5;
+//				heightScreenServer = heightScreenServer * 2 / 5;
+//				scale = scale * 2 / 5;
+//			}
 		}
 	}
 	

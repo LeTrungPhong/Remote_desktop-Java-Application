@@ -46,13 +46,11 @@ public class ClientForm extends JFrame {
 	private KeyloggerForm keyloggerForm = null;
 	private AppManagementForm appManagementForm = null;
 	private ClientFormBLL clientFormBLL = null;
+	private SendEvents sendEvents = null;
 
 	public void GUI() {
 		setTitle("Client");
 		setResizable(false);
-		int width = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
-		int height = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
-
 		setLayout(new GridBagLayout());
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,14 +75,10 @@ public class ClientForm extends JFrame {
 		
 		this.widthScreenServer = (int)sizeScreen.getWidth();
 		this.heightScreenServer = (int)sizeScreen.getHeight();
-		this.scale = clientFormBLL.getScale();
- 
-		Insets insets = this.getInsets();
-
-		setBounds(0, 0, widthScreenServer + insets.left + insets.right,
-				heightScreenServer + insets.bottom + insets.top);
 		
-		new SendEvents(this.socket, this, scale);
+		resizeDisplayScreenServer();
+		
+		sendEvents = new SendEvents(this.socket, this, scale);
 		
 		new Thread(new CentralReader(this.socket, this)).start();
 		
@@ -98,6 +92,14 @@ public class ClientForm extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public void resizeDisplayScreenServer() {
+ 
+		Insets insets = this.getInsets();
+
+		setBounds(0, 0, ((int)(widthScreenServer * this.scale)) + insets.left + insets.right,
+				((int)(heightScreenServer * this.scale)) + insets.bottom + insets.top);
 	}
 	
 	public JLabel getLabelScreen() {
@@ -114,6 +116,11 @@ public class ClientForm extends JFrame {
 
 	public float getScale() {
 		return scale;
+	}
+	
+	public void setScale(float scale) {
+		this.scale = scale;
+		sendEvents.setScale(scale);
 	}
 	
 	public RemoteForm getRemoteForm() {

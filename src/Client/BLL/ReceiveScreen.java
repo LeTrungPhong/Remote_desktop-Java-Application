@@ -24,6 +24,7 @@ public class ReceiveScreen {
 	private ClientForm client = null;
 	private int widthScreenServer = -1;
 	private int heightScreenServer = -1;
+	private float scale = 1;
 	private JLabel jlabelScreen;
 	
 	public ReceiveScreen(Socket socket, ClientForm client) throws IOException {
@@ -40,6 +41,7 @@ public class ReceiveScreen {
 				&& widthScreenServer != -1
 				&& heightScreenServer != -1) {
 			
+			scale = this.client.getScale();
 			// Nhận dữ liệu từ server
 
 			// Đọc kích thước của ảnh trước
@@ -62,7 +64,7 @@ public class ReceiveScreen {
 //			int contentWidth = widthScreenServer - insets.left - insets.right;
 //			int contentHeight = heightScreenServer - insets.bottom - insets.top;
 
-			BufferedImage resizedImage = resizeImage(receivedImage, widthScreenServer, heightScreenServer);
+			BufferedImage resizedImage = resizeImage(receivedImage, (int)(widthScreenServer * scale), (int)(heightScreenServer * scale));
 
 			if (resizedImage != null) {
 				jlabelScreen.setIcon(new ImageIcon(resizedImage));
