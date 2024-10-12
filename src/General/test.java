@@ -12,17 +12,9 @@ import javax.swing.JFrame;
 
 public class test extends JFrame {
 	
-	public static void main(String[] args) throws IOException {
-		try {
-            // Sử dụng dịch vụ checkip.amazonaws.com để lấy IP công khai
-            URL url = new URL("http://checkip.amazonaws.com");
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-            
-            String publicIP = br.readLine();
-            System.out.println("Địa chỉ IP công khai của bạn là: " + publicIP);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	public static void main(String []args) {
+		int x = 4;
+		System.out.println("value is" + (x>4?99.99 : 9));
 	}
+
 }

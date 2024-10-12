@@ -72,7 +72,7 @@ public class RemoteForm extends JFrame {
 		JButton btnAppManagement = new JButton("App Management");
 		btnAppManagement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				appManagementForm.setVisible(true);
+				appManagementForm.setVisible(false);
 			}
 		});
 		btnAppManagement.setBounds(33, 91, 135, 23);

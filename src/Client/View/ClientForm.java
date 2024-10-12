@@ -67,6 +67,8 @@ public class ClientForm extends JFrame {
 		
 		clientFormBLL = new ClientFormBLL(address, port, password);
 		
+		this.setProcessManagementForm(clientFormBLL.getProcessManagementForm());
+		this.setKeyloggerForm(clientFormBLL.getKeyloggerForm());
 		this.socket = clientFormBLL.getSocket();
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -131,8 +133,16 @@ public class ClientForm extends JFrame {
 		return processManagementForm;
 	}
 	
+	public void setProcessManagementForm(ProcessManagementForm processManagementForm) {
+		this.processManagementForm = processManagementForm;
+	}
+	
 	public KeyloggerForm getKeyloggerForm() {
 		return keyloggerForm;
+	}
+	
+	public void setKeyloggerForm(KeyloggerForm keyloggerForm) {
+		this.keyloggerForm = keyloggerForm;
 	}
 
 	public AppManagementForm getAppManagementForm() {
