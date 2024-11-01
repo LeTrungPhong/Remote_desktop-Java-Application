@@ -104,7 +104,12 @@ public class RemoteForm extends JFrame {
 		JButton btnShutdown = new JButton("Shutdown");
 		btnShutdown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				try {
+					dataOutputStream.writeInt(Commands.REQUEST_SHUTDOWN.getAbbrev());
+					dataOutputStream.flush();
+				} catch(Exception err) {
+					err.printStackTrace();
+				}
 			}
 		});
 		btnShutdown.setBounds(33, 192, 135, 23);
