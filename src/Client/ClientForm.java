@@ -3,6 +3,8 @@ package Client;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import General.Commands;
@@ -27,6 +30,7 @@ public class ClientForm extends JFrame {
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
 	private SendEvents sendEvents = null;
+	private CentralReader centralReader = null;
 
 	public void GUI() {
 		setTitle("Client");
@@ -114,7 +118,7 @@ public class ClientForm extends JFrame {
 		
 		sendEvents = new SendEvents(this.socket, this, scale);
 		
-		new Thread(new CentralReader(this.socket, this)).start();
+		new Thread(new CentralReader(this.socket, this)).start();;
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -126,6 +130,88 @@ public class ClientForm extends JFrame {
 				}
 			}
 		});
+		
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+                int result = JOptionPane.showConfirmDialog(
+                    ClientForm.this,
+                    "Bạn có chắc muốn ngắt kết nối?",
+                    "Xác nhận",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (result == JOptionPane.YES_OPTION) {
+                    try {
+						
+						if (centralReader != null) {
+			                centralReader.stopThread(); // Dừng thread CentralReader
+			            }
+
+			            if (dataOutputStream != null) {
+			                dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
+			                dataOutputStream.flush();
+			            }
+
+			            if (socket != null && !socket.isClosed()) {
+			                socket.close(); // Đóng socket sau khi dừng các hoạt động
+			            }
+
+			            ClientForm.this.dispose();
+			            if (remoteForm != null) {
+			                remoteForm.dispose();
+			            }
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                }
+            }
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	public void stopThreadCentralReader() {
+		if(centralReader != null) {
+			centralReader.stopThread();
+		}
 	}
 	
 	public void resizeDisplayScreenServer() {

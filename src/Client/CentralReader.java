@@ -28,6 +28,7 @@ public class CentralReader implements Runnable {
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
+	private boolean flag = true;
 	
 	public CentralReader(Socket socket, ClientForm client) throws IOException {
 		this.setClient(client);
@@ -42,7 +43,7 @@ public class CentralReader implements Runnable {
 	@Override 
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
+		while(this.flag) {
 			
 			try { 
 				int type = dataInputStream.readInt();
@@ -153,7 +154,7 @@ public class CentralReader implements Runnable {
 					break;
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				break;
 			}
 		}
 	}
@@ -196,5 +197,9 @@ public class CentralReader implements Runnable {
 	
 	public void setProcessManagementForm(ProcessManagementForm processManagementForm) {
 		this.processManagementForm = processManagementForm;
+	}
+	
+	public void stopThread() {
+		this.flag = false;
 	}
 }

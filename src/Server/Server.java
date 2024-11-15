@@ -26,7 +26,6 @@ public class Server {
 			serverSocket = new ServerSocket(Port.port);
 			System.out.println("Server is running...");
 			
-			
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

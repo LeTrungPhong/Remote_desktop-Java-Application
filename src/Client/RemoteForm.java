@@ -13,12 +13,15 @@ import General.Commands;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import java.awt.Choice;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
@@ -212,6 +215,75 @@ public class RemoteForm extends JFrame {
 		btnDisconnect.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDisconnect.setBounds(10, 227, 176, 23);
 		contentPane.add(btnDisconnect);
+		
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+                int result = JOptionPane.showConfirmDialog(
+                    RemoteForm.this,
+                    "Bạn có chắc muốn ngắt kết nối?",
+                    "Xác nhận",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (result == JOptionPane.YES_OPTION) {
+                	try {
+                        if (dataOutputStream != null) {
+                            dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
+                            dataOutputStream.flush();
+                            dataOutputStream.close();
+                        }
+                        client.stopThreadCentralReader();
+                        if (socket != null && !socket.isClosed()) {
+                            socket.close();
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        RemoteForm.this.dispose();
+                        client.dispose();
+                    }
+                }
+            }
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 
 	public Socket getSocket() {

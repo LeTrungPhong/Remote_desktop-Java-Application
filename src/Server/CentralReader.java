@@ -15,6 +15,9 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+import Application.MainForm;
 import General.Commands;
 
 public class CentralReader implements Runnable {
@@ -128,12 +131,10 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				default:
-//					throw new IllegalArgumentException("Unexpected value: " + );
-					System.out.println("Not data");
 					break;
 				}
 			} catch(Exception e) {
-				System.out.println(e.getMessage());
+				System.out.println(e.getMessage() + "1");
 			}
 		}
 	}

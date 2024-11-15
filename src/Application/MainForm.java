@@ -211,6 +211,12 @@ public class MainForm extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					try {
+						JOptionPane.showMessageDialog(
+							    MainForm.this, 
+							    "Máy tính đang được điều khiển!", 
+							    "Thông báo",
+							    JOptionPane.INFORMATION_MESSAGE
+							);
 						new ClientForm(textFieldPartnerID.getText(), Port.port, passwordPartner);
 						setVisible(false);
 					} catch (IOException e1) {
