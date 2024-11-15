@@ -25,6 +25,7 @@ public class CentralReader implements Runnable {
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
 	private SendAppRunning sendAppRunning = null;
+	private boolean checkConnect = true;
 	
 	public CentralReader(Socket socket) throws IOException {
 		this.setSocket(socket);
@@ -38,7 +39,7 @@ public class CentralReader implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
+		while(checkConnect) {
 			try {
 				int type = dataInputStream.readInt();
 				Commands commands = Commands.fromAbbrev(type);
@@ -120,6 +121,10 @@ public class CentralReader implements Runnable {
 				}
 				case REQUEST_APP_RUNNING: {
 					sendAppRunning.sendAppRunning();
+					break;
+				}
+				case REQUEST_DISCONNECT: {
+					checkConnect = false;
 					break;
 				}
 				default:

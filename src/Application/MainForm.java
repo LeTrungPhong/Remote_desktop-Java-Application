@@ -30,10 +30,9 @@ import javax.swing.JPasswordField;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-
-import Client.View.ClientForm;
-
 import javax.swing.border.EtchedBorder;
+
+import Client.ClientForm;
 
 public class MainForm extends JFrame {
 
@@ -213,6 +212,7 @@ public class MainForm extends JFrame {
 				} else {
 					try {
 						new ClientForm(textFieldPartnerID.getText(), Port.port, passwordPartner);
+						setVisible(false);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
