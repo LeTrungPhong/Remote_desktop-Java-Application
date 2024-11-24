@@ -25,6 +25,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+
+import Application.MainForm;
+
 import java.awt.Color;
 
 public class RemoteForm extends JFrame {
@@ -37,6 +40,7 @@ public class RemoteForm extends JFrame {
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;
 	private Choice choiceScale;
+	private MainForm mainForm = null;
 
 	/**
 	 * Launch the application.
@@ -47,10 +51,11 @@ public class RemoteForm extends JFrame {
 	 * 
 	 * @throws IOException
 	 */
-	public RemoteForm(Socket socket, ClientForm client) throws IOException {
+	public RemoteForm(Socket socket, ClientForm client, MainForm mainForm) throws IOException {
 		this.setTitle("Remote Form");
 		this.setSocket(socket);
 		this.setClient(client);
+		this.mainForm = mainForm;
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		processManagementForm = client.getProcessManagementForm();
 		keyloggerForm = client.getKeyloggerForm();
@@ -206,6 +211,27 @@ public class RemoteForm extends JFrame {
 				try {
 					dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
 					dataOutputStream.flush();
+					
+					if (RemoteForm.this.mainForm != null) {
+            			RemoteForm.this.mainForm.setVisible(true);
+            		}
+            		if (RemoteForm.this.keyloggerForm != null) {
+            			RemoteForm.this.keyloggerForm.setVisible(false);
+            		}
+            		if (RemoteForm.this.processManagementForm != null) {
+            			RemoteForm.this.processManagementForm.setVisible(false);
+            		}
+                    if (dataOutputStream != null) {
+                        dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
+                        dataOutputStream.flush();
+                        dataOutputStream.close();
+                    }
+                    client.stopThreadCentralReader();
+                    if (socket != null && !socket.isClosed()) {
+                        socket.close();
+                    }
+                    RemoteForm.this.dispose();
+                    client.dispose();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -254,6 +280,15 @@ public class RemoteForm extends JFrame {
                 );
                 if (result == JOptionPane.YES_OPTION) {
                 	try {
+                		if (RemoteForm.this.mainForm != null) {
+                			RemoteForm.this.mainForm.setVisible(true);
+                		}
+                		if (RemoteForm.this.keyloggerForm != null) {
+                			RemoteForm.this.keyloggerForm.setVisible(false);
+                		}
+                		if (RemoteForm.this.processManagementForm != null) {
+                			RemoteForm.this.processManagementForm.setVisible(false);
+                		}
                         if (dataOutputStream != null) {
                             dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
                             dataOutputStream.flush();
@@ -263,6 +298,8 @@ public class RemoteForm extends JFrame {
                         if (socket != null && !socket.isClosed()) {
                             socket.close();
                         }
+                        RemoteForm.this.dispose();
+                        client.dispose();
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     } finally {

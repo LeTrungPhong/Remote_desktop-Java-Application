@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
+import Application.MainForm;
 import General.Commands;
 
 
@@ -31,6 +32,7 @@ public class ClientForm extends JFrame {
 	private KeyloggerForm keyloggerForm = null;
 	private SendEvents sendEvents = null;
 	private CentralReader centralReader = null;
+	private MainForm mainForm = null;
 
 	public void GUI() {
 		setTitle("Client");
@@ -45,7 +47,7 @@ public class ClientForm extends JFrame {
 		setVisible(true);
 	}
 
-	public ClientForm(String address, int port, String password) throws IOException {
+	public ClientForm(String address, int port, String password, MainForm mainForm) throws IOException {
 
 		GUI();
 		
@@ -53,6 +55,7 @@ public class ClientForm extends JFrame {
 		
 		///////////////////////////////////////////////////
 		
+		this.mainForm = mainForm;
 		this.socket = new Socket(address, port);
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -123,7 +126,7 @@ public class ClientForm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					remoteForm = new RemoteForm(socket,ClientForm.this); 
+					remoteForm = new RemoteForm(socket,ClientForm.this, ClientForm.this.mainForm); 
 					remoteForm.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -169,6 +172,15 @@ public class ClientForm extends JFrame {
                 );
                 if (result == JOptionPane.YES_OPTION) {
                     try {
+                    	if (ClientForm.this.mainForm != null) {
+                    		ClientForm.this.mainForm.setVisible(true);
+                		}
+                    	if (ClientForm.this.keyloggerForm != null) {
+                    		ClientForm.this.keyloggerForm.setVisible(false);
+                		}
+                		if (ClientForm.this.processManagementForm != null) {
+                			ClientForm.this.processManagementForm.setVisible(false);
+                		}
 						
 						if (centralReader != null) {
 			                centralReader.stopThread(); // Dừng thread CentralReader

@@ -28,13 +28,22 @@ public class CentralReader implements Runnable {
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
 	private boolean checkConnect = true;
+	private MainForm mainForm = null;
 	
-	public CentralReader(Socket socket) throws IOException {
+	public CentralReader(Socket socket, MainForm mainForm) throws IOException {
 		this.setSocket(socket);
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+		this.mainForm = mainForm;
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
+		
+		JOptionPane.showMessageDialog(
+			    this.mainForm, 
+			    "Máy tính đang được điều khiển!", 
+			    "Thông báo",
+			    JOptionPane.INFORMATION_MESSAGE
+			);
 	}
 
 	@Override

@@ -211,14 +211,8 @@ public class MainForm extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					try {
-						JOptionPane.showMessageDialog(
-							    MainForm.this, 
-							    "Máy tính đang được điều khiển!", 
-							    "Thông báo",
-							    JOptionPane.INFORMATION_MESSAGE
-							);
-						new ClientForm(textFieldPartnerID.getText(), Port.port, passwordPartner);
-						setVisible(false);
+						new ClientForm(textFieldPartnerID.getText(), Port.port, passwordPartner, MainForm.this);
+						MainForm.this.setVisible(false);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -236,7 +230,7 @@ public class MainForm extends JFrame {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				MainForm.this.server = new Server(passWord);
+				MainForm.this.server = new Server(passWord, MainForm.this);
 				System.out.println("Khoi tao server thanh cong ...");
 			}
 		}).start();

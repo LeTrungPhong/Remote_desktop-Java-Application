@@ -11,6 +11,8 @@ import General.Commands;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
@@ -32,7 +34,16 @@ public class KeyloggerForm extends JFrame {
 		dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		KeyloggerForm.this.addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+            	if ((e.getNewState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+                    // Ẩn frame thay vì thu nhỏ
+                    KeyloggerForm.this.setVisible(false);
+                }
+            }
+        });
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

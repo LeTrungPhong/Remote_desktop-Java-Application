@@ -26,6 +26,8 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.event.ActionEvent;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
@@ -70,7 +72,17 @@ public class ProcessManagementForm extends JFrame {
 		dataInputStream = new DataInputStream(socket.getInputStream());
 		dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		ProcessManagementForm.this.addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+            	if ((e.getNewState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+                    // Ẩn frame thay vì thu nhỏ
+                    ProcessManagementForm.this.setVisible(false);
+                }
+            }
+        });
 		setResizable(false);
 		setBounds(100, 100, 418, 371);
 		contentPane = new JPanel();

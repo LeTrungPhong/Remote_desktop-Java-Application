@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import Application.MainForm;
 import General.Commands;
 
 public class ClientHandler implements Runnable {
@@ -12,10 +13,12 @@ public class ClientHandler implements Runnable {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String serverPassword;
+    private MainForm mainForm = null;
 
-    public ClientHandler(Socket clientSocket, String password) {
+    public ClientHandler(Socket clientSocket, String password, MainForm mainForm) {
         this.clientSocket = clientSocket;
         this.serverPassword = password;
+        this.mainForm = mainForm;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class ClientHandler implements Runnable {
             }
 
             new Thread(new SendScreen(clientSocket)).start();
-            new Thread(new CentralReader(clientSocket)).start();
+            new Thread(new CentralReader(clientSocket, ClientHandler.this.mainForm)).start();
 
         } catch (IOException e) {
             e.printStackTrace();
