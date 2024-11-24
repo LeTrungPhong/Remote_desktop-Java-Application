@@ -6,16 +6,13 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import General.AppRunning;
 import General.Commands;
 import General.ProcessWindow;
 
@@ -132,21 +129,7 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case RESPONSE_APP_RUNNING: {
-					System.out.println("Bat dau doc app running ...");
-					LinkedList<AppRunning> list = new LinkedList<AppRunning>();
-					
-					int size = dataInputStream.readInt();
-					
-					for(int i = 0; i < size; ++i) {
-						String Name = dataInputStream.readUTF();
-						int Id = dataInputStream.readInt();
-						list.add(new AppRunning(Name, Id));
-					}
-					
-//					for (AppRunning appRunning : list) {
-//						System.out.println(appRunning.toString());
-//					}
-					break;
+					break; 
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);

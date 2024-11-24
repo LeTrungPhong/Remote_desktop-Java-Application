@@ -27,7 +27,6 @@ public class CentralReader implements Runnable {
 	private DataOutputStream dataOutputStream = null;
 	private ReceiveEvents receiveEvents = null;
 	private SendProcess sendProcess = null;
-	private SendAppRunning sendAppRunning = null;
 	private boolean checkConnect = true;
 	
 	public CentralReader(Socket socket) throws IOException {
@@ -36,7 +35,6 @@ public class CentralReader implements Runnable {
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
-		sendAppRunning = new SendAppRunning(socket);
 	}
 
 	@Override
@@ -123,7 +121,6 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case REQUEST_APP_RUNNING: {
-					sendAppRunning.sendAppRunning();
 					break;
 				}
 				case REQUEST_DISCONNECT: {
