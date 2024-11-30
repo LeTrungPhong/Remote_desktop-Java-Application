@@ -29,12 +29,14 @@ public class CentralReader implements Runnable {
 	private SendProcess sendProcess = null;
 	private boolean checkConnect = true;
 	private MainForm mainForm = null;
+	private DisconnectForm disconnectForm = null;
 	
-	public CentralReader(Socket socket, MainForm mainForm) throws IOException {
+	public CentralReader(Socket socket, MainForm mainForm, DisconnectForm disconnectForm) throws IOException {
 		this.setSocket(socket);
 		this.dataInputStream = new DataInputStream(socket.getInputStream());
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		this.mainForm = mainForm;
+		this.disconnectForm = disconnectForm;
 		receiveEvents = new ReceiveEvents(socket);
 		sendProcess = new SendProcess(socket);
 		
@@ -133,7 +135,15 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case REQUEST_DISCONNECT: {
+					JOptionPane.showMessageDialog(
+						    this.mainForm, 
+						    "Client da ngat ket noi!", 
+						    "Thông báo",
+						    JOptionPane.INFORMATION_MESSAGE
+						);
 					checkConnect = false;
+					this.mainForm.setVisible(true);
+					this.disconnectForm.dispose();
 					break;
 				}
 				default:

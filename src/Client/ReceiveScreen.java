@@ -53,7 +53,6 @@ public class ReceiveScreen {
 			// Nhận dữ liệu ảnh
 			byte[] imageBytes = new byte[size];
 			dataInputStream.readFully(imageBytes);
-			// // datadataInputStream
 
 			// Chuyển đổi lại thành BufferedImage
 			BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));

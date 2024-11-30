@@ -91,7 +91,7 @@ public class RemoteForm extends JFrame {
 				}
 			}
 		});
-		btnScreenShot.setBounds(10, 140, 176, 23);
+		btnScreenShot.setBounds(10, 145, 176, 23);
 		contentPane.add(btnScreenShot);
 
 		JButton btnKeylogger = new JButton("Lắng nghe sự kiện bàn phím");
@@ -108,15 +108,25 @@ public class RemoteForm extends JFrame {
 		btnShutdown.setHorizontalAlignment(SwingConstants.LEFT);
 		btnShutdown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					dataOutputStream.writeInt(Commands.REQUEST_SHUTDOWN.getAbbrev());
-					dataOutputStream.flush();
-				} catch(Exception err) {
-					err.printStackTrace();
-				}
+				int result = JOptionPane.showConfirmDialog(
+			            null, 
+			            "Bạn có chắc chắn muốn tắt nguồn không?", 
+			            "Xác nhận Tắt nguồn",    
+			            JOptionPane.YES_NO_OPTION,            
+			            JOptionPane.WARNING_MESSAGE         
+			        );
+				if (result == JOptionPane.YES_OPTION) {
+					try {
+						dataOutputStream.writeInt(Commands.REQUEST_SHUTDOWN.getAbbrev());
+						dataOutputStream.flush();
+					} catch(Exception err) {
+						err.printStackTrace();
+					}
+		        }
 			}
 		});
-		btnShutdown.setBounds(10, 204, 176, 23);
+		
+		btnShutdown.setBounds(10, 200, 176, 23);
 		contentPane.add(btnShutdown);
 		
 		Dimension sizeClient = Toolkit.getDefaultToolkit().getScreenSize();
@@ -208,36 +218,11 @@ public class RemoteForm extends JFrame {
 		JButton btnDisconnect = new JButton("Ngắt kết nối");
 		btnDisconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
-					dataOutputStream.flush();
-					
-					if (RemoteForm.this.mainForm != null) {
-            			RemoteForm.this.mainForm.setVisible(true);
-            		}
-            		if (RemoteForm.this.keyloggerForm != null) {
-            			RemoteForm.this.keyloggerForm.setVisible(false);
-            		}
-            		if (RemoteForm.this.processManagementForm != null) {
-            			RemoteForm.this.processManagementForm.setVisible(false);
-            		}
-                    if (dataOutputStream != null) {
-                        dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
-                        dataOutputStream.flush();
-                        dataOutputStream.close();
-                    }
-                    client.stopThreadCentralReader();
-                    if (socket != null && !socket.isClosed()) {
-                        socket.close();
-                    }
-                    RemoteForm.this.dispose();
-                    client.dispose();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				disconnect();
 			}
 		});
+		
+		
 		btnDisconnect.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDisconnect.setBounds(10, 227, 176, 23);
 		contentPane.add(btnDisconnect);
@@ -279,33 +264,7 @@ public class RemoteForm extends JFrame {
                     JOptionPane.YES_NO_OPTION
                 );
                 if (result == JOptionPane.YES_OPTION) {
-                	try {
-                		if (RemoteForm.this.mainForm != null) {
-                			RemoteForm.this.mainForm.setVisible(true);
-                		}
-                		if (RemoteForm.this.keyloggerForm != null) {
-                			RemoteForm.this.keyloggerForm.setVisible(false);
-                		}
-                		if (RemoteForm.this.processManagementForm != null) {
-                			RemoteForm.this.processManagementForm.setVisible(false);
-                		}
-                        if (dataOutputStream != null) {
-                            dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
-                            dataOutputStream.flush();
-                            dataOutputStream.close();
-                        }
-                        client.stopThreadCentralReader();
-                        if (socket != null && !socket.isClosed()) {
-                            socket.close();
-                        }
-                        RemoteForm.this.dispose();
-                        client.dispose();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } finally {
-                        RemoteForm.this.dispose();
-                        client.dispose();
-                    }
+                	disconnect();
                 }
             }
 			
@@ -321,6 +280,42 @@ public class RemoteForm extends JFrame {
 				
 			}
 		});
+	}
+	
+	public void disconnect () {
+		System.out.println("Disconnect");
+		try {
+			if (dataOutputStream != null) {
+            	// Gửi yêu cầu ngắt kết nối đến Server
+                dataOutputStream.writeInt(Commands.REQUEST_DISCONNECT.getAbbrev());
+                dataOutputStream.flush();
+                dataOutputStream.close();
+            }
+            
+            // Dừng thread CentralReader
+            client.stopThreadCentralReader();
+            
+            if (socket != null && !socket.isClosed()) {
+            	// Đóng socket sau khi dừng các hoạt động
+                socket.close();
+            }
+            RemoteForm.this.dispose();
+            client.dispose();
+    		if (RemoteForm.this.keyloggerForm != null) { 
+    			RemoteForm.this.keyloggerForm.setVisible(false);
+    		}
+    		if (RemoteForm.this.processManagementForm != null) {
+    			RemoteForm.this.processManagementForm.setVisible(false);
+    		}
+            if (RemoteForm.this.mainForm != null) { 
+    			RemoteForm.this.mainForm.setVisible(true); 
+    		}
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            RemoteForm.this.dispose();
+            client.dispose();
+        }
 	}
 
 	public Socket getSocket() {

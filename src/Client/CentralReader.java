@@ -31,6 +31,10 @@ public class CentralReader implements Runnable {
 		this.setClient(client);
 		this.setSocket(socket);
 		this.setRemoteForm(client.getRemoteForm());
+		System.out.println("Check Remote form");
+		 
+		
+		
 		this.setKeyloggerForm(client.getKeyloggerForm());
 		this.setProcessManagementForm(client.getProcessManagementForm());
 		dataInputStream = new DataInputStream(socket.getInputStream());
@@ -128,8 +132,11 @@ public class CentralReader implements Runnable {
 					keyloggerForm.listening(keyChar);
 					break;
 				}
-				case RESPONSE_APP_RUNNING: {
-					break; 
+				case SERVER_DISCONNECT: {
+					System.out.println("Server ngat ket noi");
+					if (this.remoteForm != null) {
+						this.remoteForm.disconnect();
+					}
 				}
 				default:
 //					throw new IllegalArgumentException("Unexpected value: " + type);

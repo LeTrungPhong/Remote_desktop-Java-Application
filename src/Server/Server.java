@@ -33,8 +33,12 @@ public class Server {
 						try {
 							Socket socketClient = serverSocket.accept();
 							System.out.println("Client connected");
+							DisconnectForm disconnectForm = new DisconnectForm(socketClient);
+							disconnectForm.setVisible(true);
 							
-							new Thread(new ClientHandler(socketClient, password, Server.this.mainForm)).start();
+							Server.this.mainForm.setVisible(false);
+							
+							new Thread(new ClientHandler(socketClient, password, Server.this.mainForm, disconnectForm)).start();
 						} catch (IOException e) {
 							// TODO: handle exception
 						}

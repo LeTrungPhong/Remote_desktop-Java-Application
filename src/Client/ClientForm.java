@@ -61,6 +61,8 @@ public class ClientForm extends JFrame {
 		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		this.setProcessManagementForm(new ProcessManagementForm(socket));
 		this.setKeyloggerForm(new KeyloggerForm(socket));
+//		this.setRemoteForm(new RemoteForm(socket,ClientForm.this, ClientForm.this.mainForm)); 
+//		remoteForm.setVisible(true); 
 		
 		dataOutputStream.writeInt(Commands.REQUEST_CONNECT.getAbbrev());
 		dataOutputStream.writeUTF(password);
@@ -121,18 +123,20 @@ public class ClientForm extends JFrame {
 		
 		sendEvents = new SendEvents(this.socket, this, scale);
 		
-		new Thread(new CentralReader(this.socket, this)).start();;
+		setRemoteForm(new RemoteForm(socket,ClientForm.this, ClientForm.this.mainForm)); 
+		remoteForm.setVisible(true);
 		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					remoteForm = new RemoteForm(socket,ClientForm.this, ClientForm.this.mainForm); 
-					remoteForm.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					 
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}); 
+		
+		new Thread(new CentralReader(this.socket, this)).start();
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
@@ -256,6 +260,10 @@ public class ClientForm extends JFrame {
 	
 	public RemoteForm getRemoteForm() {
 		return remoteForm;
+	}
+	
+	public void setRemoteForm(RemoteForm remoteForm) {
+		this.remoteForm = remoteForm;
 	}
 	
 	public ProcessManagementForm getProcessManagementForm() {

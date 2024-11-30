@@ -14,11 +14,13 @@ public class ClientHandler implements Runnable {
     private DataOutputStream dataOutputStream;
     private String serverPassword;
     private MainForm mainForm = null;
+    private DisconnectForm disconnectForm = null;
 
-    public ClientHandler(Socket clientSocket, String password, MainForm mainForm) {
+    public ClientHandler(Socket clientSocket, String password, MainForm mainForm, DisconnectForm disconnectForm) {
         this.clientSocket = clientSocket;
         this.serverPassword = password;
         this.mainForm = mainForm;
+        this.disconnectForm = disconnectForm;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class ClientHandler implements Runnable {
             }
 
             new Thread(new SendScreen(clientSocket)).start();
-            new Thread(new CentralReader(clientSocket, ClientHandler.this.mainForm)).start();
+            new Thread(new CentralReader(clientSocket, ClientHandler.this.mainForm, disconnectForm)).start();
 
         } catch (IOException e) {
             e.printStackTrace();
