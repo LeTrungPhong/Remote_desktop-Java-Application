@@ -12,12 +12,7 @@ import java.util.LinkedList;
 import General.Commands;
 import General.ProcessWindow;
 
-public class SendProcess implements Serializable {
-	/**
-	 * 
-	 */
-
-	private static final long serialVersionUID = 1L;
+public class SendProcess {
 	private Socket socket = null;
 	private DataOutputStream dataOutputStream = null;
 	

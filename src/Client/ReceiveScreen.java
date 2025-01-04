@@ -24,6 +24,8 @@ public class ReceiveScreen {
 	private int heightScreenServer = -1;
 	private float scale = 1;
 	private JLabel jlabelScreen;
+	private long startTime;
+	private long endTime;
 	
 	public ReceiveScreen(Socket socket, ClientForm client) throws IOException {
 		this.setSocket(socket);
@@ -35,6 +37,15 @@ public class ReceiveScreen {
 		dataInputStream = new DataInputStream(socket.getInputStream());
 	}
 	public void receiveScreenByCommands(int command) throws IOException {
+		
+//		if(this.endTime <= 0) {
+//			this.endTime = System.currentTimeMillis();
+//		} else {
+//			this.startTime = this.endTime;
+//			this.endTime = System.currentTimeMillis();
+//			System.out.println(1000 / (this.endTime - this.startTime));
+//		}
+		
 		if(command == Commands.INFOR_SCREEN.getAbbrev()
 				&& widthScreenServer != -1
 				&& heightScreenServer != -1) {
@@ -85,20 +96,6 @@ public class ReceiveScreen {
 
 		return resizedImage;
 	}
-
-//	@Override
-//	public void run() {
-//		// TODO Auto-generated method stub
-//		try {
-//			while (true) {
-//				
-//			}
-//			
-////			System.out.println(dataInputStream.readInt());
-//		} catch(IOException err) {
-//			err.printStackTrace();
-//		}
-//	}
 
 	public Socket getSocket() {
 		return socket;

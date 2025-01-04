@@ -1,12 +1,7 @@
 package General;
 
-import java.io.Serializable;
-
-public class ProcessWindow implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class ProcessWindow{
+	
 	private String ImageName;
 	private int PID;
 	private String SessionName;

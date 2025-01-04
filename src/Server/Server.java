@@ -15,8 +15,8 @@ public class Server {
 	private ServerSocket serverSocket = null;
 	private DataInputStream dataInputStream = null;
 	private DataOutputStream dataOutputStream = null;
-	private volatile String password;
-	private volatile boolean checkConnect = false;
+	private String password;
+	private boolean checkConnect = false;
 	private MainForm mainForm = null;
 
 	public void InitServer() {

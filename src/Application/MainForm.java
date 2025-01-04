@@ -42,9 +42,8 @@ public class MainForm extends JFrame {
 	private JTextField textFieldMyPassWord;
 	private JTextField textFieldPartnerID;
 	private JPasswordField passwordFieldPartnerPassWord;
-	private volatile String MACaddress;
-	private volatile String passWord;
-	private volatile String IPaddress;
+	private String passWord;
+	private String IPaddress;
 	private Server server = null;
 
 	/**
@@ -234,24 +233,6 @@ public class MainForm extends JFrame {
 				System.out.println("Khoi tao server thanh cong ...");
 			}
 		}).start();
-	}
-
-	public void setMACaddress() {
-		try {
-			InetAddress address = InetAddress.getLocalHost();
-			NetworkInterface networkInterface = NetworkInterface.getByInetAddress(address);
-			byte[] mac = networkInterface.getHardwareAddress();
-			System.out.print("MAC address  : ");
-			StringBuilder stringBuilder = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-				stringBuilder.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-			}
-			MACaddress = stringBuilder.toString();
-			System.out.println(stringBuilder.toString());
-			textFieldMyID.setText(stringBuilder.toString());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 	public void setIPaddress() {

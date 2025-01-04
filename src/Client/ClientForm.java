@@ -24,9 +24,9 @@ public class ClientForm extends JFrame {
 	private JLabel jLabelScreen;
 	private DataInputStream dataInputStream = null;
 	private DataOutputStream dataOutputStream = null;
-	private volatile int widthScreenServer = -1;
-	private volatile int heightScreenServer = -1;
-	private volatile float scale = 1;
+	private int widthScreenServer = -1;
+	private int heightScreenServer = -1;
+	private float scale = 1;
 	private RemoteForm remoteForm = null;
 	private ProcessManagementForm processManagementForm = null;
 	private KeyloggerForm keyloggerForm = null;

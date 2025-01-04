@@ -2,14 +2,9 @@ package General;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.LinkedList;
 
-public class ListProcessesWindows implements Serializable {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class ListProcessesWindows {
 	
 	public LinkedList<ProcessWindow> getListProcess(){
 		try {
