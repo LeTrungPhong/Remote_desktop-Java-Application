@@ -134,6 +134,15 @@ public class CentralReader implements Runnable {
 				case REQUEST_APP_RUNNING: {
 					break;
 				}
+				case REQUEST_SHUTDOWN : {
+					String shutdownCommand = "shutdown /s /t 0";
+		            
+		            // Thực thi lệnh
+		            Runtime.getRuntime().exec(shutdownCommand);
+
+		            System.out.println("Máy tính sẽ tắt ngay bây giờ.");
+					break;
+				}
 				case REQUEST_DISCONNECT: {
 					JOptionPane.showMessageDialog(
 						    this.mainForm, 
