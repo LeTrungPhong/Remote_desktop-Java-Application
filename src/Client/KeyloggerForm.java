@@ -54,7 +54,7 @@ public class KeyloggerForm extends JFrame {
 		textAreaKeylogger = new JTextArea();
 		textAreaKeylogger.setEditable(false);
 		textAreaKeylogger.setLineWrap(true);
-		textAreaKeylogger.setBounds(10, 11, 414, 178);
+		textAreaKeylogger.setBounds(10, 11, 414, 205);
 		contentPane.add(textAreaKeylogger);
 		
 		JButton btnStart = new JButton("Start listening");
@@ -70,7 +70,7 @@ public class KeyloggerForm extends JFrame {
 				}
 			}
 		});
-		btnStart.setBounds(10, 200, 118, 23);
+		btnStart.setBounds(10, 227, 118, 23);
 		contentPane.add(btnStart);
 		
 		JButton btnStop = new JButton("Stop");
@@ -80,7 +80,6 @@ public class KeyloggerForm extends JFrame {
 			}
 		});
 		btnStop.setBounds(10, 227, 118, 23);
-		contentPane.add(btnStop);
 		
 		JButton btnDownload = new JButton("Download");
 		btnDownload.addActionListener(new ActionListener() {
@@ -89,7 +88,6 @@ public class KeyloggerForm extends JFrame {
 			}
 		});
 		btnDownload.setBounds(335, 212, 89, 38);
-		contentPane.add(btnDownload);
 	}
 
 	public Socket getSocket() {
